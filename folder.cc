@@ -12,7 +12,7 @@
 
 namespace add9daw2 {
 
-Folder::Folder(std::string path, double l, double t, double r, double b, MainWindow* main_window) : WindowArea(l, t, r, b, main_window), open(false), path(path) {
+Folder::Folder(std::string path, double l, double t, double r, double b, MainWindow* main_window) : WindowArea(l, t, r, b, main_window), open_(false), path_(path) {
 	std::vector<std::string> file_names;
 	//	std::cout << "Loading files from " << dirName << "..." << std::endl;
 		DIR *directory;
@@ -44,17 +44,17 @@ Folder::Folder(std::string path, double l, double t, double r, double b, MainWin
 				total_errors++;
 			}
 		}
-		lowest_file_y = getT() - (file_names.size() + 1 - total_errors)*FILE_NAME_HEIGHT + PADDING;
-		std::cout << "lowest file Y: " << lowest_file_y << std::endl;
+		lowest_file_y_ = getT() - (file_names.size() + 1 - total_errors)*FILE_NAME_HEIGHT + PADDING;
+		std::cout << "lowest file Y: " << lowest_file_y_ << std::endl;
 		std::cout << "bottom of files area: " << main_window->getFilesArea()->getB() << std::endl;
 }
 
 void Folder::draw(double x_offset, double y_offset) {
 	// Draw the folder name
-	std::string abbreviated_path = path.substr(path.find("SAMPLES") + 8);
+	std::string abbreviated_path = path_.substr(path_.find("SAMPLES") + 8);
 	glColor3d(0.6, 0.74, 0.80);
 	Font(GLUT_BITMAP_HELVETICA_10, (char*) abbreviated_path.c_str(), normalizeCoord(getL() + 0.01), normalizeCoord(getT() - 0.01));
-	if (open) {
+	if (open_) {
 		// Draw the open triangle icon
 		glColor3d(0.3, 0.37, 0.40);
 		glBegin(GL_LINE_STRIP);
@@ -96,7 +96,7 @@ bool Folder::onClick(double x, double y) {
 }
 
 double Folder::getMaxY() {
-	if (open) {
+	if (open_) {
 		double max_y = getT();
 		for (int i=0; i<numChildWindows(); i++) {
 			if (true) {
@@ -111,7 +111,7 @@ double Folder::getMaxY() {
 	}
 }
 double Folder::getMinY() {
-	if (open) {
+	if (open_) {
 		double min_y = getB();
 		for (int i=0; i<numChildWindows(); i++) {
 			if (true) {

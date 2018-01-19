@@ -35,49 +35,49 @@ public:
 
 	float* nextBlock(int frames_per_buffer, int channels);
 
-	inline int getHeight() { return height; }
-	inline int getWidth() { return width; }
+	inline int getHeight() { return height_; }
+	inline int getWidth() { return width_; }
 
 	inline void draw(double x_offset, double y_offset) {
-		for (int i=0; i<window_areas.size(); i++) {
-			window_areas[i]->draw(x_offset, y_offset);
+		for (int i=0; i<window_areas_.size(); i++) {
+			window_areas_[i]->draw(x_offset, y_offset);
 		}
 	}
 	inline void onClick(double x, double y) {
 		// Check all window areas for click
-		for (int i=0; i<window_areas.size(); i++) {
-			window_areas[i]->onClick(x, y);
+		for (int i=0; i<window_areas_.size(); i++) {
+			window_areas_[i]->onClick(x, y);
 		}
 	}
 	inline void onDoubleClick(double x, double y) {
 		// Check all window areas for double click
-		for (int i=0; i<window_areas.size(); i++) {
-			window_areas[i]->onDoubleClick(x, y);
+		for (int i=0; i<window_areas_.size(); i++) {
+			window_areas_[i]->onDoubleClick(x, y);
 		}
 	}
 	inline void onDrag(double x, double y) {
 		// Check all window areas for drag
-		for (int i=0; i<window_areas.size(); i++) {
-			window_areas[i]->onDrag(x, y);
+		for (int i=0; i<window_areas_.size(); i++) {
+			window_areas_[i]->onDrag(x, y);
 		}
 	}
 	inline void onUpClick(double x, double y) {
 		// Check all window areas for up click
-		for (int i=0; i<window_areas.size(); i++) {
-			window_areas[i]->onUpClick(x, y);
+		for (int i=0; i<window_areas_.size(); i++) {
+			window_areas_[i]->onUpClick(x, y);
 		}
 	}
-	inline void setPlayingFile(AudioFile* file) { playing_file = file; }
+	inline void setPlayingFile(AudioFile* file) { playing_file_ = file; }
 
-	inline WindowArea* getFilesArea() {return files_area; }
+	inline WindowArea* getFilesArea() {return files_area_; }
 private:
-	AudioFile* playing_file;
+	AudioFile* playing_file_;
 
-	int height, width;
+	int height_, width_;
 
-	std::vector<WindowArea*> window_areas;
+	std::vector<WindowArea*> window_areas_;
 
-	WindowArea *arrange_area, *effects_area, *files_area, *top_menu_area;
+	WindowArea *arrange_area_, *effects_area_, *files_area_, *top_menu_area_;
 };
 
 } // namespace add9daw2

@@ -26,9 +26,9 @@ public:
 
 	void draw(double x_offset, double y_offset) override;
 	inline void toggleOpen() {
-		open = !open;
+		open_ = !open_;
 		for (int i=0; i<numChildWindows(); i++) {
-			getChildWindows(i)->setHidden(!open);
+			getChildWindows(i)->setHidden(!open_);
 		}
 	}
 
@@ -38,11 +38,11 @@ public:
 	double getMinY() override;
 
 private:
-	bool open;
+	bool open_;
 
-	double lowest_file_y;
+	double lowest_file_y_;
 
-	std::string path;
+	std::string path_;
 };
 
 } // namespace add9daw2
