@@ -13,7 +13,7 @@
 #include <dirent.h>
 #include <GLUT/glut.h>
 
-#include "AudioFile.h"
+#include "audio_file.h"
 
 namespace add9daw2 {
 
@@ -21,7 +21,7 @@ class WindowArea;
 
 class Folder : public WindowArea {
 public:
-	Folder(std::string path, double l, double t, double r, double b, MainWindow* mainWindow);
+	Folder(std::string path, double l, double t, double r, double b, MainWindow* main_window);
 	virtual ~Folder() {}
 
 	void draw(double x_offset, double y_offset) override;
@@ -40,7 +40,7 @@ public:
 private:
 	bool open;
 
-	double lowestFileY;
+	double lowest_file_y;
 
 	std::string path;
 };

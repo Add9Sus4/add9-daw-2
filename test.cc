@@ -13,7 +13,7 @@
 
 #include <ctime>
 
-#include "MainWindow.h"
+#include "main_window.h"
 
 // How quickly two clicks must occur in sequence in order to be considered a 'double click'
 #define DOUBLE_CLICK_TIME	500
@@ -25,16 +25,7 @@
 
 namespace add9daw2 {
 
-typedef struct {
-	float amplitude1;
-	float sampleRate;
-	SNDFILE *infile1;
-	SF_INFO sfinfo1;
-	int channels;
-	float buffer1[BLOCK_SIZE*2];
-} paData;
-
-MainWindow* mainWindow;
+MainWindow* main_window;
 
 int start_time;
 int last_time;
@@ -65,19 +56,19 @@ typedef struct Mouse
 	double ypress; /*	stores the y-coord of when the first button press occurred	*/
 } Mouse;
 
-Mouse TheMouse = {0,0,0,0,0};
+Mouse the_mouse = {0,0,0,0,0};
 int getMilliCount(){
 	timeb tb;
 	ftime(&tb);
-	int nCount = tb.millitm + (tb.time & 0xfffff) * 1000;
-	return nCount;
+	int n_count = tb.millitm + (tb.time & 0xfffff) * 1000;
+	return n_count;
 }
 
-int getMilliSpan(int nTimeStart){
-	int nSpan = getMilliCount() - nTimeStart;
-	if(nSpan < 0)
-		nSpan += 0x100000 * 1000;
-	return nSpan;
+int getMilliSpan(int n_time_start){
+	int n_span = getMilliCount() - n_time_start;
+	if(n_span < 0)
+		n_span += 0x100000 * 1000;
+	return n_span;
 }
 
 double AmpToDB(double amp) {
@@ -87,19 +78,19 @@ double AmpToDB(double amp) {
 /*
  *  Description:  Callback for Port Audio
  */
-static int paCallback(const void *inputBuffer, void *outputBuffer,
-		unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo,
-		PaStreamCallbackFlags statusFlags, void *userData) {
+static int paCallback(const void *input_buffer, void *output_buffer,
+		unsigned long frames_per_buffer, const PaStreamCallbackTimeInfo* time_info,
+		PaStreamCallbackFlags status_flags, void *user_data) {
 //	paData *data = (paData *) userData;
 
-	float* audio = mainWindow->nextBlock(framesPerBuffer, 2);
+	float* audio = main_window->nextBlock(frames_per_buffer, 2);
 
 //	float *inBuf = (float*) inputBuffer;
-	float *outBuf = (float*) outputBuffer;
+	float *out_buf = (float*) output_buffer;
 
-	for (int i=0; i<framesPerBuffer; i++) {
-		outBuf[2*i] = audio[2*i];
-		outBuf[2*i + 1] = audio[2*i + 1];
+	for (int i=0; i<frames_per_buffer; i++) {
+		out_buf[2*i] = audio[2*i];
+		out_buf[2*i + 1] = audio[2*i + 1];
 	}
 
 	delete[] audio;
@@ -113,27 +104,27 @@ static int paCallback(const void *inputBuffer, void *outputBuffer,
 void runPortAudio() {
 
 	PaStream* stream;
-	PaStreamParameters outputParameters;
-	PaStreamParameters inputParameters;
+	PaStreamParameters output_parameters;
+	PaStreamParameters input_parameters;
 	PaError err;
 	/* Initialize PortAudio */
 	Pa_Initialize();
 	/* Set output stream parameters */
-	outputParameters.device = Pa_GetDefaultOutputDevice();
-	outputParameters.channelCount = 2;
-	outputParameters.sampleFormat = paFloat32;
-	outputParameters.suggestedLatency = Pa_GetDeviceInfo(
-			outputParameters.device)->defaultLowOutputLatency;
-	outputParameters.hostApiSpecificStreamInfo = NULL;
+	output_parameters.device = Pa_GetDefaultOutputDevice();
+	output_parameters.channelCount = 2;
+	output_parameters.sampleFormat = paFloat32;
+	output_parameters.suggestedLatency = Pa_GetDeviceInfo(
+			output_parameters.device)->defaultLowOutputLatency;
+	output_parameters.hostApiSpecificStreamInfo = NULL;
 	/* Set input stream parameters */
-	inputParameters.device = Pa_GetDefaultInputDevice();
-	inputParameters.channelCount = 1;
-	inputParameters.sampleFormat = paFloat32;
-	inputParameters.suggestedLatency =
-			Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
-	inputParameters.hostApiSpecificStreamInfo = NULL;
+	input_parameters.device = Pa_GetDefaultInputDevice();
+	input_parameters.channelCount = 1;
+	input_parameters.sampleFormat = paFloat32;
+	input_parameters.suggestedLatency =
+			Pa_GetDeviceInfo(input_parameters.device)->defaultLowInputLatency;
+	input_parameters.hostApiSpecificStreamInfo = NULL;
 	/* Open audio stream */
-	err = Pa_OpenStream(&stream, &inputParameters, &outputParameters,
+	err = Pa_OpenStream(&stream, &input_parameters, &output_parameters,
 			SAMPLE_RATE, BLOCK_SIZE, paNoFlag, paCallback, NULL);
 
 	if (err != paNoError) {
@@ -186,10 +177,10 @@ void MouseMotion(int x, int y)
 	/*
 	 *	update the mouse position
 	 */
-	TheMouse.x = (double) x / mainWindow->getWidth();
-	TheMouse.y = 1.0 - (double) y / mainWindow->getHeight();
-	std::cout << "Mouse Dragged: " << TheMouse.x << ", " << TheMouse.y << std::endl;
-	mainWindow->onDrag(TheMouse.x, TheMouse.y);
+	the_mouse.x = (double) x / main_window->getWidth();
+	the_mouse.y = 1.0 - (double) y / main_window->getHeight();
+	std::cout << "Mouse Dragged: " << the_mouse.x << ", " << the_mouse.y << std::endl;
+	main_window->onDrag(the_mouse.x, the_mouse.y);
 	glutPostRedisplay();
 }
 void MouseButton(int button,int state,int x, int y)
@@ -197,19 +188,19 @@ void MouseButton(int button,int state,int x, int y)
 	/*
 	 *	update the mouse position
 	 */
-	TheMouse.x = (double) x / mainWindow->getWidth();
-	TheMouse.y = 1.0 - (double) y / mainWindow->getHeight();
+	the_mouse.x = (double) x / main_window->getWidth();
+	the_mouse.y = 1.0 - (double) y / main_window->getHeight();
 
 	/*
 	 *	has the button been pressed or released?
 	 */
 	if (state == GLUT_DOWN)
 	{
-		TheMouse.xpress = TheMouse.x;
-		TheMouse.ypress = TheMouse.y;
+		the_mouse.xpress = the_mouse.x;
+		the_mouse.ypress = the_mouse.y;
 		// Check for double click
 		int current_time = getMilliSpan(start_time);
-		std::cout << "Mouse Pressed: " << TheMouse.x << ", " << TheMouse.y << std::endl;
+		std::cout << "Mouse Pressed: " << the_mouse.x << ", " << the_mouse.y << std::endl;
 		int time_between_clicks = current_time - last_time;
 		std::cout << "Time elapsed: " << time_between_clicks << std::endl;
 		last_time = getMilliSpan(start_time);
@@ -217,17 +208,17 @@ void MouseButton(int button,int state,int x, int y)
 		// Double click recorded
 		if (time_between_clicks < DOUBLE_CLICK_TIME) {
 			std::cout << "Double click recorded" << std::endl;
-			mainWindow->onDoubleClick(TheMouse.x, TheMouse.y);
+			main_window->onDoubleClick(the_mouse.x, the_mouse.y);
 		} else {
-			mainWindow->onClick(TheMouse.x, TheMouse.y);
+			main_window->onClick(the_mouse.x, the_mouse.y);
 		}
 
 		/*
 		 *	This holds the location of the first mouse click
 		 */
-		if ( !(TheMouse.lmb || TheMouse.mmb || TheMouse.rmb) ) {
-			TheMouse.xpress = TheMouse.x;
-			TheMouse.ypress = TheMouse.y;
+		if ( !(the_mouse.lmb || the_mouse.mmb || the_mouse.rmb) ) {
+			the_mouse.xpress = the_mouse.x;
+			the_mouse.ypress = the_mouse.y;
 		}
 
 		/*
@@ -239,8 +230,8 @@ void MouseButton(int button,int state,int x, int y)
 			break;
 		}
 	} else {
-		std::cout << "Mouse Released: " << TheMouse.x << ", " << TheMouse.y << std::endl;
-		mainWindow->onUpClick(TheMouse.x, TheMouse.y);
+		std::cout << "Mouse Released: " << the_mouse.x << ", " << the_mouse.y << std::endl;
+		main_window->onUpClick(the_mouse.x, the_mouse.y);
 	}
 
 	//	printf("Mouse: x = %d, y = %d\n", TheMouse.x, TheMouse.y);
@@ -252,9 +243,9 @@ void MouseButton(int button,int state,int x, int y)
 	glutPostRedisplay();
 }
 void MouseHover(int x, int y) {
-	TheMouse.x = (double) x / mainWindow->getWidth();
-	TheMouse.y = 1.0 - (double) y / mainWindow->getHeight();
-	std::cout << "Mouse Over: " << TheMouse.x << ", " << TheMouse.y << std::endl;
+	the_mouse.x = (double) x / main_window->getWidth();
+	the_mouse.y = 1.0 - (double) y / main_window->getHeight();
+	std::cout << "Mouse Over: " << the_mouse.x << ", " << the_mouse.y << std::endl;
 	displayFunc();
 }
 void displayFunc() {
@@ -270,7 +261,7 @@ void displayFunc() {
 	glLoadIdentity();
 
 	// Draw stuff here
-	mainWindow->draw(0.0, 0.0);
+	main_window->draw(0.0, 0.0);
 
 
 	// After drawing
@@ -326,7 +317,7 @@ void initialize_glut(int argc, char *argv[]) {
 	// double buffer, use rgb color, enable depth buffer
 	glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	// initialize the window size
-	glutInitWindowSize(mainWindow->getWidth(), mainWindow->getHeight());
+	glutInitWindowSize(main_window->getWidth(), main_window->getHeight());
 	// set the window postion
 	glutInitWindowPosition(0, 0);
 	// create the window
@@ -365,7 +356,7 @@ int main(int argc, char **argv) {
 	start_time = getMilliCount();
 	last_time = getMilliSpan(start_time);
 
-	mainWindow = new MainWindow(878, 1440, BLOCK_SIZE, 2);
+	main_window = new MainWindow(878, 1440, BLOCK_SIZE, 2);
 
 	initialize_glut(argc, argv);
 	runPortAudio();

@@ -5,14 +5,15 @@
  *      Author: aarondawson
  */
 
-#include "Folder.h"
-#include "MainWindow.h"
-#include "WindowArea.h"
+#include "folder.h"
+
+#include "main_window.h"
+#include "window_area.h"
 
 namespace add9daw2 {
 
-Folder::Folder(std::string path, double l, double t, double r, double b, MainWindow* mainWindow) : WindowArea(l, t, r, b, mainWindow), path(path), open(false) {
-	std::vector<std::string> fileNames;
+Folder::Folder(std::string path, double l, double t, double r, double b, MainWindow* main_window) : WindowArea(l, t, r, b, main_window), open(false), path(path) {
+	std::vector<std::string> file_names;
 	//	std::cout << "Loading files from " << dirName << "..." << std::endl;
 		DIR *directory;
 		struct dirent *entry;
@@ -29,13 +30,13 @@ Folder::Folder(std::string path, double l, double t, double r, double b, MainWin
 						strcasestr(entry->d_name, ".aiff") != NULL ||
 						strcasestr(entry->d_name, ".aif") != NULL) &&
 						strcasestr(entry->d_name, ".asd") == NULL) {
-				fileNames.push_back(entry->d_name);
+				file_names.push_back(entry->d_name);
 			}
 		}
 		int total_errors = 0;
-		for (int i=0; i<fileNames.size(); i++) {
-			AudioFile* file = new AudioFile(fileNames[i], getL() + PADDING, getT() - (i + 1)*FILE_NAME_HEIGHT - PADDING,
-					getR() - PADDING, getT() - (i + 2)*FILE_NAME_HEIGHT + PADDING, mainWindow);
+		for (int i=0; i<file_names.size(); i++) {
+			AudioFile* file = new AudioFile(file_names[i], getL() + PADDING, getT() - (i + 1)*FILE_NAME_HEIGHT - PADDING,
+					getR() - PADDING, getT() - (i + 2)*FILE_NAME_HEIGHT + PADDING, main_window);
 			if (file->getFileName().compare("Error") != 0) {
 				file->setHidden(true);
 				addChildWindow(file);
@@ -43,16 +44,16 @@ Folder::Folder(std::string path, double l, double t, double r, double b, MainWin
 				total_errors++;
 			}
 		}
-		lowestFileY = getT() - (fileNames.size() + 1 - total_errors)*FILE_NAME_HEIGHT + PADDING;
-		std::cout << "lowest file Y: " << lowestFileY << std::endl;
-		std::cout << "bottom of files area: " << mainWindow->getFilesArea()->getB() << std::endl;
+		lowest_file_y = getT() - (file_names.size() + 1 - total_errors)*FILE_NAME_HEIGHT + PADDING;
+		std::cout << "lowest file Y: " << lowest_file_y << std::endl;
+		std::cout << "bottom of files area: " << main_window->getFilesArea()->getB() << std::endl;
 }
 
 void Folder::draw(double x_offset, double y_offset) {
 	// Draw the folder name
-	std::string abbrevPath = path.substr(path.find("SAMPLES") + 8);
+	std::string abbreviated_path = path.substr(path.find("SAMPLES") + 8);
 	glColor3d(0.6, 0.74, 0.80);
-	Font(GLUT_BITMAP_HELVETICA_10, (char*) abbrevPath.c_str(), normalizeCoord(getL() + 0.01), normalizeCoord(getT() - 0.01));
+	Font(GLUT_BITMAP_HELVETICA_10, (char*) abbreviated_path.c_str(), normalizeCoord(getL() + 0.01), normalizeCoord(getT() - 0.01));
 	if (open) {
 		// Draw the open triangle icon
 		glColor3d(0.3, 0.37, 0.40);
@@ -78,7 +79,7 @@ void Folder::draw(double x_offset, double y_offset) {
 }
 
 bool Folder::onClick(double x, double y) {
-	double scrollAmount = getParentWindow()->getScrollAmount();
+	double scroll_amount = getParentWindow()->getScrollAmount();
 	std::cout << "Folder clicked" << std::endl;
 	// If the click was inside the triangle
 	if (x > getL() && x < getL() + 0.005
@@ -87,7 +88,7 @@ bool Folder::onClick(double x, double y) {
 		return true;
 	} else {
 		for (int i=0; i<numChildWindows(); i++) {
-			getChildWindows(i)->onClick(x, y - scrollAmount);
+			getChildWindows(i)->onClick(x, y - scroll_amount);
 		}
 	}
 	return false;
@@ -96,30 +97,30 @@ bool Folder::onClick(double x, double y) {
 
 double Folder::getMaxY() {
 	if (open) {
-		double maxY = getT();
+		double max_y = getT();
 		for (int i=0; i<numChildWindows(); i++) {
 			if (true) {
-				if (getChildWindows(i)->getT() > maxY) {
-					maxY = getChildWindows(i)->getT();
+				if (getChildWindows(i)->getT() > max_y) {
+					max_y = getChildWindows(i)->getT();
 				}
 			}
 		}
-		return maxY;
+		return max_y;
 	} else {
 		return getT();
 	}
 }
 double Folder::getMinY() {
 	if (open) {
-		double minY = getB();
+		double min_y = getB();
 		for (int i=0; i<numChildWindows(); i++) {
 			if (true) {
-				if (getChildWindows(i)->getB() < minY) {
-					minY = getChildWindows(i)->getB();
+				if (getChildWindows(i)->getB() < min_y) {
+					min_y = getChildWindows(i)->getB();
 				}
 			}
 		}
-		return minY;
+		return min_y;
 	} else {
 		return getB();
 	}

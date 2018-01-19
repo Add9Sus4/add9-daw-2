@@ -20,9 +20,9 @@
 
 #include <iostream>
 
-#include "AudioTrack.h"
-#include "Folder.h"
-#include "Resources.h"
+#include "audio_track.h"
+#include "folder.h"
+#include "resources.h"
 
 namespace add9daw2 {
 
@@ -30,54 +30,54 @@ class WindowArea;
 
 class MainWindow {
 public:
-	MainWindow(int height, int width, int framesPerBuffer, int channels);
+	MainWindow(int height, int width, int frames_per_buffer, int channels);
 	virtual ~MainWindow();
 
-	float* nextBlock(int framesPerBuffer, int channels);
+	float* nextBlock(int frames_per_buffer, int channels);
 
 	inline int getHeight() { return height; }
 	inline int getWidth() { return width; }
 
 	inline void draw(double x_offset, double y_offset) {
-		for (int i=0; i<windowAreas.size(); i++) {
-			windowAreas[i]->draw(x_offset, y_offset);
+		for (int i=0; i<window_areas.size(); i++) {
+			window_areas[i]->draw(x_offset, y_offset);
 		}
 	}
 	inline void onClick(double x, double y) {
 		// Check all window areas for click
-		for (int i=0; i<windowAreas.size(); i++) {
-			windowAreas[i]->onClick(x, y);
+		for (int i=0; i<window_areas.size(); i++) {
+			window_areas[i]->onClick(x, y);
 		}
 	}
 	inline void onDoubleClick(double x, double y) {
 		// Check all window areas for double click
-		for (int i=0; i<windowAreas.size(); i++) {
-			windowAreas[i]->onDoubleClick(x, y);
+		for (int i=0; i<window_areas.size(); i++) {
+			window_areas[i]->onDoubleClick(x, y);
 		}
 	}
 	inline void onDrag(double x, double y) {
 		// Check all window areas for drag
-		for (int i=0; i<windowAreas.size(); i++) {
-			windowAreas[i]->onDrag(x, y);
+		for (int i=0; i<window_areas.size(); i++) {
+			window_areas[i]->onDrag(x, y);
 		}
 	}
 	inline void onUpClick(double x, double y) {
 		// Check all window areas for up click
-		for (int i=0; i<windowAreas.size(); i++) {
-			windowAreas[i]->onUpClick(x, y);
+		for (int i=0; i<window_areas.size(); i++) {
+			window_areas[i]->onUpClick(x, y);
 		}
 	}
-	inline void setPlayingFile(AudioFile* file) { playingFile = file; }
+	inline void setPlayingFile(AudioFile* file) { playing_file = file; }
 
-	inline WindowArea* getFilesArea() {return filesArea; }
+	inline WindowArea* getFilesArea() {return files_area; }
 private:
-	AudioFile* playingFile;
+	AudioFile* playing_file;
 
 	int height, width;
 
-	std::vector<WindowArea*> windowAreas;
+	std::vector<WindowArea*> window_areas;
 
-	WindowArea *arrangeArea, *effectsArea, *filesArea, *topMenuArea;
+	WindowArea *arrange_area, *effects_area, *files_area, *top_menu_area;
 };
 
 } // namespace add9daw2

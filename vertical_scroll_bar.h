@@ -11,7 +11,7 @@
 #include <GLUT/glut.h>
 
 #include "Rect.h"
-#include "WindowArea.h"
+#include "window_area.h"
 
 class MainWindow;
 
@@ -19,8 +19,8 @@ namespace add9daw2 {
 
 class VerticalScrollBar {
 public:
-	VerticalScrollBar(double l, double t, double r, double b, MainWindow* mainWindow) :
-		hasBeenClicked(false), hidden(true), diff(0.0), lastY(0.0), scrollRatio(1.0), yOffset(0.0), parentWindow(NULL) {
+	VerticalScrollBar(double l, double t, double r, double b, MainWindow* main_window) :
+		has_been_clicked(false), hidden(true), diff(0.0), lastY(0.0), scroll_ratio(1.0), y_offset(0.0), parent_window(NULL) {
 			rect = new Rect(l + PADDING, t - PADDING, r - PADDING, b + PADDING);
 		}
 	virtual ~VerticalScrollBar() {}
@@ -34,21 +34,21 @@ public:
 	inline double getT() { return rect->T(); }
 	inline double getR() { return rect->R(); }
 	inline double getB() { return rect->B(); }
-	inline double getScrollAmount() { return (-yOffset - diff)*scrollRatio; }
+	inline double getScrollAmount() { return (-y_offset - diff)*scroll_ratio; }
 	inline double height() { return getT() - getB(); }
 
 	void draw(double x_offset, double y_offset);
 	inline void setHidden(bool hidden) { this->hidden = hidden; }
 	inline void setRect(double l, double t, double r, double b) { rect->set(l, t, r, b); }
-	inline void setParentWindow(WindowArea* windowArea) {this->parentWindow = windowArea; }
-	inline void setScrollRatio(double scrollRatio)  { this->scrollRatio = scrollRatio; }
+	inline void setParentWindow(WindowArea* window_area) {this->parent_window = window_area; }
+	inline void setScrollRatio(double scroll_ratio)  { this->scroll_ratio = scroll_ratio; }
 private:
-	bool hasBeenClicked, hidden;
+	bool has_been_clicked, hidden;
 
-	double diff, lastY, scrollRatio, yOffset;
+	double diff, lastY, scroll_ratio, y_offset;
 
 	Rect* rect;
-	WindowArea* parentWindow;
+	WindowArea* parent_window;
 
 	inline double normalizeCoord(double coord) { return coord * 2.0 - 1.0; }
 };

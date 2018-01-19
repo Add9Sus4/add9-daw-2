@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include "WindowArea.h"
+#include "window_area.h"
 
 namespace add9daw2 {
 
@@ -40,45 +40,42 @@ class MainWindow;
 
 class AudioFile : public WindowArea {
 public:
-	AudioFile(std::string fileName, double l, double t, double r, double b, MainWindow* mainWindow) :
-		WindowArea(l, t, r, b, mainWindow), currentPosition_(0), numChannels_(MONO),
-		 numFrames_(0), sampleRate_(44100), fileName_(fileName) {}
+	AudioFile(std::string file_name, double l, double t, double r, double b, MainWindow* main_window) :
+		WindowArea(l, t, r, b, main_window), current_position_(0), num_channels_(MONO),
+		 num_frames_(0), sample_rate_(44100), file_name_(file_name) {}
 	virtual ~AudioFile() {}
 
-	bool getAudio(float* emptyBlock, int framesPerBuffer, int channels);
-	inline bool isMono() { return numChannels_ == MONO; }
-	inline bool isStereo() { return numChannels_ == STEREO; }
+	bool getAudio(float* empty_block, int frames_per_buffer, int channels);
+	inline bool isMono() { return num_channels_ == MONO; }
+	inline bool isStereo() { return num_channels_ == STEREO; }
 	bool onClick(double x, double y) override;
 
 	double* getAudioFromChannel(int channel);
-	double* getAudioFromChannel(int channel, int startFrame, int endFrame);
+	double* getAudioFromChannel(int channel, int start_frame, int end_frame);
 
-	inline int getNumChannels() { return numChannels_; }
-	inline int getNumFrames() { return numFrames_; }
-	inline int getSampleRate() { return sampleRate_; }
+	inline int getNumChannels() { return num_channels_; }
+	inline int getNumFrames() { return num_frames_; }
+	inline int getSampleRate() { return sample_rate_; }
 
-	inline std::string getFileName() { return fileName_; }
+	inline std::string getFileName() { return file_name_; }
 
 	void draw(double x_offset, double y_offset) override;
 	void invertPhase();
 	void loadAudio();
 	void normalize();
 	void zeroPad();
-	void zeroPad(int newLength);
+	void zeroPad(int new_length);
 	void removeLeadingZeros();
 	void removeLeadingZeros(double threshold);
 	void removeTrailingZeros();
 	void removeTrailingZeros(double threshold);
-	void trimFromEnd(int numSamples);
+	void trimFromEnd(int num_samples);
 
 private:
-	int currentPosition_;
-	int numChannels_;
-	int numFrames_;
-	int sampleRate_;
+	int current_position_, num_channels_, num_frames_, sample_rate_;
 
 	std::vector<std::vector<double> > audio_;
-	std::string fileName_;
+	std::string file_name_;
 };
 
 } // namespace add9daw2

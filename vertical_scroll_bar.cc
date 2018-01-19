@@ -5,8 +5,9 @@
  *      Author: aarondawson
  */
 
-#include "VerticalScrollBar.h"
-#include "MainWindow.h"
+#include "vertical_scroll_bar.h"
+
+#include "main_window.h"
 
 namespace add9daw2 {
 
@@ -26,7 +27,7 @@ bool VerticalScrollBar::onClick(double x, double y) {
 	if (hidden) { return false; }
 	if (x > getL() && x < getR() && y < getT() && y > getB()) {
 		std::cout << "Scroll bar clicked" << std::endl;
-		hasBeenClicked = true;
+		has_been_clicked = true;
 		lastY = y;
 		diff = 0;
 	}
@@ -34,23 +35,23 @@ bool VerticalScrollBar::onClick(double x, double y) {
 }
 bool VerticalScrollBar::onDrag(double x, double y) {
 	if (hidden) { return false; }
-	double diffTemp = y - lastY;
-	if (hasBeenClicked) {
-		if (yOffset + diffTemp > 0.0) {
-			diffTemp = -yOffset;
-		} else if (yOffset + diffTemp - height() < -parentWindow->height()) {
-			diffTemp = height() - parentWindow->height() - yOffset;
+	double diff_temp = y - lastY;
+	if (has_been_clicked) {
+		if (y_offset + diff_temp > 0.0) {
+			diff_temp = -y_offset;
+		} else if (y_offset + diff_temp - height() < -parent_window->height()) {
+			diff_temp = height() - parent_window->height() - y_offset;
 		}
-		setRect(getL(), parentWindow->getT() + yOffset + diffTemp, getR(), parentWindow->getB() + yOffset + diffTemp);
-		diff = diffTemp;
+		setRect(getL(), parent_window->getT() + y_offset + diff_temp, getR(), parent_window->getB() + y_offset + diff_temp);
+		diff = diff_temp;
 
 	}
 	return true;
 }
 bool VerticalScrollBar::onUpClick(double x, double y) {
-	if (hidden || !hasBeenClicked) { return false; }
-		hasBeenClicked = false;
-		yOffset += diff;
+	if (hidden || !has_been_clicked) { return false; }
+		has_been_clicked = false;
+		y_offset += diff;
 		diff = 0;
 	return true;
 }

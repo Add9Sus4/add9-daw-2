@@ -11,7 +11,7 @@
 #define DEFAULT_AUDIO_TRACK_HEIGHT	0.050
 #define AUDIO_TRACK_PADDING			0.0005
 
-#include "WindowArea.h"
+#include "window_area.h"
 
 namespace add9daw2 {
 
@@ -19,7 +19,7 @@ class WindowArea;
 
 class AudioTrack : public WindowArea {
 public:
-	AudioTrack(double l, double t, double r, double b, MainWindow* mainWindow) : WindowArea(l, t, r, b, mainWindow) {};
+	AudioTrack(double l, double t, double r, double b, MainWindow* main_window) : WindowArea(l, t, r, b, main_window) {};
 	virtual ~AudioTrack() {}
 };
 

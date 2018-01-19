@@ -1,16 +1,16 @@
-Test.o: ../Test.cpp ../MainWindow.h ../AudioTrack.h ../WindowArea.h \
-  ../Rect.h ../Folder.h ../AudioFile.h ../Resources.h
+test.o: ../test.cc ../main_window.h ../audio_track.h ../window_area.h \
+  ../Rect.h ../folder.h ../audio_file.h ../resources.h
 
-../MainWindow.h:
+../main_window.h:
 
-../AudioTrack.h:
+../audio_track.h:
 
-../WindowArea.h:
+../window_area.h:
 
 ../Rect.h:
 
-../Folder.h:
+../folder.h:
 
-../AudioFile.h:
+../audio_file.h:
 
-../Resources.h:
+../resources.h:

@@ -26,7 +26,7 @@ class VerticalScrollBar;
 
 class WindowArea {
 public:
-	WindowArea(double l, double t, double r, double b, MainWindow* mainWindow);
+	WindowArea(double l, double t, double r, double b, MainWindow* main_window);
 	virtual ~WindowArea() {}
 
 	inline bool isHidden() { return hidden; }
@@ -46,15 +46,15 @@ public:
 	inline double height() { return rect->height(); }
 	inline double width() { return rect->width(); }
 
-	inline int numChildWindows() { return childWindows.size(); }
+	inline int numChildWindows() { return child_windows.size(); }
 
-	inline MainWindow* getMainWindow() { return mainWindow; }
+	inline MainWindow* getMainWindow() { return main_window; }
 
 	inline Rect *getRect() { return rect; }
 
-	inline void addChildWindow(WindowArea* windowArea) {
-		childWindows.push_back(windowArea);
-		windowArea->setParentWindow(this);
+	inline void addChildWindow(WindowArea* window_area) {
+		child_windows.push_back(window_area);
+		window_area->setParentWindow(this);
 	}
 	virtual void draw(double x_offset, double y_offset);
 	void Font(void *font, char *text, double x, double y);
@@ -65,27 +65,27 @@ public:
 	inline void setR(double r) { rect->setR(r); }
 	inline void setB(double b) { rect->setB(b); }
 	inline void setName(std::string name) { this->name = name; }
-	inline void setParentWindow(WindowArea* windowArea) {this->parentWindow = windowArea; }
+	inline void setParentWindow(WindowArea* window_area) {this->parent_window = window_area; }
 	inline void setRect(double l, double t, double r, double b) { rect->set(l, t, r, b); }
 
-	inline WindowArea* getChildWindows(int i) { return childWindows[i]; }
-	inline WindowArea* getParentWindow() { return parentWindow; }
+	inline WindowArea* getChildWindows(int i) { return child_windows[i]; }
+	inline WindowArea* getParentWindow() { return parent_window; }
 protected:
 	inline double normalizeCoord(double coord) { return coord * 2.0 - 1.0; }
 private:
 	bool hidden;
 
-	MainWindow* mainWindow;
+	MainWindow* main_window;
 
 	Rect* rect;
 
 	std::string name;
 
-	std::vector<WindowArea*> childWindows;
+	std::vector<WindowArea*> child_windows;
 
-	VerticalScrollBar* verticalScrollBar;
+	VerticalScrollBar* vertical_scrollbar;
 
-	WindowArea* parentWindow;
+	WindowArea* parent_window;
 };
 
 } // namespace add9daw2
