@@ -32,6 +32,12 @@ class MainWindow {
 public:
 	MainWindow(int height, int width, int framesPerBuffer, int channels);
 	virtual ~MainWindow();
+
+	float* nextBlock(int framesPerBuffer, int channels);
+
+	inline int getHeight() { return height; }
+	inline int getWidth() { return width; }
+
 	inline void draw(double x_offset, double y_offset) {
 		for (int i=0; i<windowAreas.size(); i++) {
 			windowAreas[i]->draw(x_offset, y_offset);
@@ -41,12 +47,6 @@ public:
 		// Check all window areas for click
 		for (int i=0; i<windowAreas.size(); i++) {
 			windowAreas[i]->onClick(x, y);
-		}
-	}
-	inline void onUpClick(double x, double y) {
-		// Check all window areas for up click
-		for (int i=0; i<windowAreas.size(); i++) {
-			windowAreas[i]->onUpClick(x, y);
 		}
 	}
 	inline void onDoubleClick(double x, double y) {
@@ -61,20 +61,23 @@ public:
 			windowAreas[i]->onDrag(x, y);
 		}
 	}
+	inline void onUpClick(double x, double y) {
+		// Check all window areas for up click
+		for (int i=0; i<windowAreas.size(); i++) {
+			windowAreas[i]->onUpClick(x, y);
+		}
+	}
 	inline void setPlayingFile(AudioFile* file) { playingFile = file; }
-	float* nextBlock(int framesPerBuffer, int channels);
-	inline int getHeight() { return height; }
-	inline int getWidth() { return width; }
+
 	inline WindowArea* getFilesArea() {return filesArea; }
 private:
-	int height, width;
-	WindowArea* arrangeArea;
-	WindowArea* effectsArea;
-	WindowArea* filesArea;
-	WindowArea* topMenuArea;
-	std::vector<WindowArea*> windowAreas;
 	AudioFile* playingFile;
 
+	int height, width;
+
+	std::vector<WindowArea*> windowAreas;
+
+	WindowArea *arrangeArea, *effectsArea, *filesArea, *topMenuArea;
 };
 
 } // namespace add9daw2

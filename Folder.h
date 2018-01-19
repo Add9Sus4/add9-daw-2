@@ -22,6 +22,8 @@ class WindowArea;
 class Folder : public WindowArea {
 public:
 	Folder(std::string path, double l, double t, double r, double b, MainWindow* mainWindow);
+	virtual ~Folder() {}
+
 	void draw(double x_offset, double y_offset) override;
 	inline void toggleOpen() {
 		open = !open;
@@ -29,14 +31,18 @@ public:
 			getChildWindows(i)->setHidden(!open);
 		}
 	}
+
 	bool onClick(double x, double y) override;
+
 	double getMaxY() override;
 	double getMinY() override;
-	virtual ~Folder() {}
+
 private:
-	std::string path;
 	bool open;
+
 	double lowestFileY;
+
+	std::string path;
 };
 
 } // namespace add9daw2

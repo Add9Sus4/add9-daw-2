@@ -28,54 +28,64 @@ class WindowArea {
 public:
 	WindowArea(double l, double t, double r, double b, MainWindow* mainWindow);
 	virtual ~WindowArea() {}
-	inline void setL(double l) { rect->setL(l); }
-	inline void setT(double t) { rect->setT(t); }
-	inline void setR(double r) { rect->setR(r); }
-	inline void setB(double b) { rect->setB(b); }
-	inline void setRect(double l, double t, double r, double b) { rect->set(l, t, r, b); }
-	inline void addChildWindow(WindowArea* windowArea) {
-		childWindows.push_back(windowArea);
-		windowArea->setParentWindow(this);
-	}
-	void Font(void *font, char *text, double x, double y);
-	inline void setName(std::string name) { this->name = name; }
-	inline void setHidden(bool hidden) { this->hidden = hidden; }
-	inline void setParentWindow(WindowArea* windowArea) {this->parentWindow = windowArea; }
-	void hideScrollBar();
 
-	virtual void draw(double x_offset, double y_offset);
+	inline bool isHidden() { return hidden; }
+	inline virtual bool isInWindow(double x, double y) { return x > getL() && x < getR() && y < getT() && y > getB(); }
 	virtual bool onClick(double x, double y);
-	virtual bool onUpClick(double x, double y);
 	virtual bool onDoubleClick(double x, double y);
 	virtual bool onDrag(double x, double y);
-	inline virtual bool isInWindow(double x, double y) { return x > getL() && x < getR() && y < getT() && y > getB(); }
-	inline bool isHidden() { return hidden; }
+	virtual bool onUpClick(double x, double y);
 
 	inline double getL() { return rect->L(); }
 	inline double getT() { return rect->T(); }
 	inline double getR() { return rect->R(); }
 	inline double getB() { return rect->B(); }
-	inline double width() { return rect->width(); }
-	inline double height() { return rect->height(); }
-	double getScrollAmount();
 	virtual double getMaxY();
 	virtual double getMinY();
-	inline Rect *getRect() { return rect; }
-	inline WindowArea* getParentWindow() { return parentWindow; }
-	inline MainWindow* getMainWindow() { return mainWindow; }
-	inline WindowArea* getChildWindows(int i) { return childWindows[i]; }
+	double getScrollAmount();
+	inline double height() { return rect->height(); }
+	inline double width() { return rect->width(); }
+
 	inline int numChildWindows() { return childWindows.size(); }
 
+	inline MainWindow* getMainWindow() { return mainWindow; }
+
+	inline Rect *getRect() { return rect; }
+
+	inline void addChildWindow(WindowArea* windowArea) {
+		childWindows.push_back(windowArea);
+		windowArea->setParentWindow(this);
+	}
+	virtual void draw(double x_offset, double y_offset);
+	void Font(void *font, char *text, double x, double y);
+	void hideScrollBar();
+	inline void setHidden(bool hidden) { this->hidden = hidden; }
+	inline void setL(double l) { rect->setL(l); }
+	inline void setT(double t) { rect->setT(t); }
+	inline void setR(double r) { rect->setR(r); }
+	inline void setB(double b) { rect->setB(b); }
+	inline void setName(std::string name) { this->name = name; }
+	inline void setParentWindow(WindowArea* windowArea) {this->parentWindow = windowArea; }
+	inline void setRect(double l, double t, double r, double b) { rect->set(l, t, r, b); }
+
+	inline WindowArea* getChildWindows(int i) { return childWindows[i]; }
+	inline WindowArea* getParentWindow() { return parentWindow; }
 protected:
 	inline double normalizeCoord(double coord) { return coord * 2.0 - 1.0; }
 private:
-	WindowArea* parentWindow;
-	VerticalScrollBar* verticalScrollBar;
-	std::vector<WindowArea*> childWindows;
 	bool hidden;
+
 	MainWindow* mainWindow;
+
 	Rect* rect;
+
 	std::string name;
+
+	std::vector<WindowArea*> childWindows;
+
+	VerticalScrollBar* verticalScrollBar;
+
+	WindowArea* parentWindow;
 };
 
 } // namespace add9daw2

@@ -22,7 +22,6 @@ void VerticalScrollBar::draw(double x_offset, double y_offset) {
 	glEnd();
 
 }
-
 bool VerticalScrollBar::onClick(double x, double y) {
 	if (hidden) { return false; }
 	if (x > getL() && x < getR() && y < getT() && y > getB()) {
@@ -33,15 +32,6 @@ bool VerticalScrollBar::onClick(double x, double y) {
 	}
 	return true;
 }
-
-bool VerticalScrollBar::onUpClick(double x, double y) {
-	if (hidden || !hasBeenClicked) { return false; }
-		hasBeenClicked = false;
-		yOffset += diff;
-		diff = 0;
-	return true;
-}
-
 bool VerticalScrollBar::onDrag(double x, double y) {
 	if (hidden) { return false; }
 	double diffTemp = y - lastY;
@@ -55,6 +45,13 @@ bool VerticalScrollBar::onDrag(double x, double y) {
 		diff = diffTemp;
 
 	}
+	return true;
+}
+bool VerticalScrollBar::onUpClick(double x, double y) {
+	if (hidden || !hasBeenClicked) { return false; }
+		hasBeenClicked = false;
+		yOffset += diff;
+		diff = 0;
 	return true;
 }
 

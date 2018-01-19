@@ -20,18 +20,64 @@ WindowArea::WindowArea(double l, double t, double r, double b, MainWindow* mainW
 	parentWindow = NULL;
 }
 
-void WindowArea::Font(void *font, char *text, double x, double y) {
-	glDisable(GL_LIGHTING);
-	char buf[20];
-	snprintf(buf, 20, "%s", text);
-	glRasterPos2d(x, y);
-	while ( *text != '\0') {
-		glutBitmapCharacter(font, *text);
-		++text;
+bool WindowArea::onClick(double x, double y) {
+	if (hidden) { return false; }
+	verticalScrollBar->onClick(x, y);
+	// Was the click in the window?
+	if (x > getL() && x < getR() && y > getB() && y < getT()) {
+//		cout << "Click recorded at " << x << ", " << y << endl;
+//		if (!verticalScrollBar->isHidden()) {
+//			cout << "Scrollbar at " << verticalScrollBar->getL() << ", " << verticalScrollBar->getT()
+//					<< ", " << verticalScrollBar->getR() << ", " << verticalScrollBar->getB() << endl;
+//		}
+
+		// Check to see if a window inside this window was clicked on
+		bool childClicked = false;
+		for (int i=0; i<childWindows.size(); i++) {
+			if (childWindows[i]->onClick(x, y)) {
+				childClicked = true;
+			}
+		}
+		return !childClicked;
+	} else {
+		return false;
 	}
-	glEnable(GL_LIGHTING);
 }
-void WindowArea::hideScrollBar() { verticalScrollBar->setHidden(true); }
+bool WindowArea::onDoubleClick(double x, double y) {
+	return false;
+}
+bool WindowArea::onDrag(double x, double y) {
+	verticalScrollBar->onDrag(x, y);
+	return true;
+}
+bool WindowArea::onUpClick(double x, double y) {
+	verticalScrollBar->onUpClick(x, y);
+	return true;
+}
+
+double WindowArea::getMaxY() {
+	double maxY = getT();
+	for (int i=0; i<childWindows.size(); i++) {
+		if (true) {
+			if (childWindows[i]->getT() > maxY) {
+				maxY = childWindows[i]->getT();
+			}
+		}
+	}
+	return maxY;
+}
+double WindowArea::getMinY() {
+	double minY = getB();
+	for (int i=0; i<childWindows.size(); i++) {
+		if (true) {
+			if (childWindows[i]->getB() < minY) {
+				minY = childWindows[i]->getB();
+			}
+		}
+	}
+	return minY;
+}
+double WindowArea::getScrollAmount() { return verticalScrollBar->getScrollAmount(); }
 
 void WindowArea::draw(double x_offset, double y_offset) {
 	if (hidden) { return; }
@@ -75,63 +121,17 @@ void WindowArea::draw(double x_offset, double y_offset) {
 		childWindows[i]->draw(0.0, verticalScrollBar->getScrollAmount());
 	}
 }
-bool WindowArea::onClick(double x, double y) {
-	if (hidden) { return false; }
-	verticalScrollBar->onClick(x, y);
-	// Was the click in the window?
-	if (x > getL() && x < getR() && y > getB() && y < getT()) {
-//		cout << "Click recorded at " << x << ", " << y << endl;
-//		if (!verticalScrollBar->isHidden()) {
-//			cout << "Scrollbar at " << verticalScrollBar->getL() << ", " << verticalScrollBar->getT()
-//					<< ", " << verticalScrollBar->getR() << ", " << verticalScrollBar->getB() << endl;
-//		}
-
-		// Check to see if a window inside this window was clicked on
-		bool childClicked = false;
-		for (int i=0; i<childWindows.size(); i++) {
-			if (childWindows[i]->onClick(x, y)) {
-				childClicked = true;
-			}
-		}
-		return !childClicked;
-	} else {
-		return false;
+void WindowArea::Font(void *font, char *text, double x, double y) {
+	glDisable(GL_LIGHTING);
+	char buf[20];
+	snprintf(buf, 20, "%s", text);
+	glRasterPos2d(x, y);
+	while ( *text != '\0') {
+		glutBitmapCharacter(font, *text);
+		++text;
 	}
+	glEnable(GL_LIGHTING);
 }
-bool WindowArea::onUpClick(double x, double y) {
-	verticalScrollBar->onUpClick(x, y);
-	return true;
-}
-bool WindowArea::onDoubleClick(double x, double y) {
-	return false;
-}
-bool WindowArea::onDrag(double x, double y) {
-	verticalScrollBar->onDrag(x, y);
-	return true;
-}
-
-double WindowArea::getScrollAmount() { return verticalScrollBar->getScrollAmount(); }
-double WindowArea::getMaxY() {
-	double maxY = getT();
-	for (int i=0; i<childWindows.size(); i++) {
-		if (true) {
-			if (childWindows[i]->getT() > maxY) {
-				maxY = childWindows[i]->getT();
-			}
-		}
-	}
-	return maxY;
-}
-double WindowArea::getMinY() {
-	double minY = getB();
-	for (int i=0; i<childWindows.size(); i++) {
-		if (true) {
-			if (childWindows[i]->getB() < minY) {
-				minY = childWindows[i]->getB();
-			}
-		}
-	}
-	return minY;
-}
+void WindowArea::hideScrollBar() { verticalScrollBar->setHidden(true); }
 
 } // namespace add9daw2
