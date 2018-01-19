@@ -39,10 +39,10 @@ bool VerticalScrollBar::onDrag(double x, double y) {
 	if (has_been_clicked_) {
 		if (y_offset_ + diff_temp > 0.0) {
 			diff_temp = -y_offset_;
-		} else if (y_offset_ + diff_temp - height() < -parent_window_->height()) {
-			diff_temp = height() - parent_window_->height() - y_offset_;
+		} else if (y_offset_ + diff_temp - height() < -parent_window_->get_height()) {
+			diff_temp = height() - parent_window_->get_height() - y_offset_;
 		}
-		setRect(getL(), parent_window_->getT() + y_offset_ + diff_temp, getR(), parent_window_->getB() + y_offset_ + diff_temp);
+		setRect(getL(), parent_window_->get_top() + y_offset_ + diff_temp, getR(), parent_window_->get_bottom() + y_offset_ + diff_temp);
 		diff_ = diff_temp;
 
 	}

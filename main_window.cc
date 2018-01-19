@@ -24,29 +24,29 @@ MainWindow::MainWindow(int height, int width, int frames_per_buffer, int channel
 	window_areas_.push_back(top_menu_area_);
 	// Add audio tracks to arrange window
 	for (int i=0; i<6; i++) {
-		AudioTrack* audio_track = new AudioTrack(arrange_area_->getL() + PADDING,
-				arrange_area_->getT() - DEFAULT_AUDIO_TRACK_HEIGHT*i - PADDING,
-				arrange_area_->getR() - PADDING,
-				arrange_area_->getT() - DEFAULT_AUDIO_TRACK_HEIGHT*(i + 1) + PADDING, this);
+		AudioTrack* audio_track = new AudioTrack(arrange_area_->get_left() + PADDING,
+				arrange_area_->get_top() - DEFAULT_AUDIO_TRACK_HEIGHT*i - PADDING,
+				arrange_area_->get_right() - PADDING,
+				arrange_area_->get_top() - DEFAULT_AUDIO_TRACK_HEIGHT*(i + 1) + PADDING, this);
 		char buf[20];
 		snprintf(buf, 20, "Track %d", i + 1);
-		audio_track->setName(buf);
-		arrange_area_->addChildWindow(audio_track);
+		audio_track->set_name(buf);
+		arrange_area_->AddChildWindow(audio_track);
 	}
 	// Add folders to files area
-	Folder* kick_folder = new Folder(KICK_DIR_PATH, files_area_->getL() + PADDING, files_area_->getT() - PADDING,
-			files_area_->getR() - PADDING, files_area_->getT() - 0.1 - PADDING, this);
-	files_area_->addChildWindow(kick_folder);
+	Folder* kick_folder = new Folder(KICK_DIR_PATH, files_area_->get_left() + PADDING, files_area_->get_top() - PADDING,
+			files_area_->get_right() - PADDING, files_area_->get_top() - 0.1 - PADDING, this);
+	files_area_->AddChildWindow(kick_folder);
 }
 
 MainWindow::~MainWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-float* MainWindow::nextBlock(int frames_per_buffer, int channels) {
+float* MainWindow::GetNextBlock(int frames_per_buffer, int channels) {
 	float* block = new float[frames_per_buffer*channels];
 	if (playing_file_) {
-		bool playing = playing_file_->getAudio(block, frames_per_buffer, channels);
+		bool playing = playing_file_->GetAudio(block, frames_per_buffer, channels);
 		if (!playing) {
 			playing_file_ = NULL;
 		}

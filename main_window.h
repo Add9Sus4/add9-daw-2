@@ -33,43 +33,43 @@ public:
 	MainWindow(int height, int width, int frames_per_buffer, int channels);
 	virtual ~MainWindow();
 
-	float* nextBlock(int frames_per_buffer, int channels);
+	float* GetNextBlock(int frames_per_buffer, int channels);
 
-	inline int getHeight() { return height_; }
-	inline int getWidth() { return width_; }
+	inline int get_height() { return height_; }
+	inline int get_width() { return width_; }
 
-	inline void draw(double x_offset, double y_offset) {
+	inline void Draw(double x_offset, double y_offset) {
 		for (int i=0; i<window_areas_.size(); i++) {
-			window_areas_[i]->draw(x_offset, y_offset);
+			window_areas_[i]->Draw(x_offset, y_offset);
 		}
 	}
-	inline void onClick(double x, double y) {
+	inline void OnClick(double x, double y) {
 		// Check all window areas for click
 		for (int i=0; i<window_areas_.size(); i++) {
-			window_areas_[i]->onClick(x, y);
+			window_areas_[i]->OnClick(x, y);
 		}
 	}
-	inline void onDoubleClick(double x, double y) {
+	inline void OnDoubleClick(double x, double y) {
 		// Check all window areas for double click
 		for (int i=0; i<window_areas_.size(); i++) {
-			window_areas_[i]->onDoubleClick(x, y);
+			window_areas_[i]->OnDoubleClick(x, y);
 		}
 	}
-	inline void onDrag(double x, double y) {
+	inline void OnDrag(double x, double y) {
 		// Check all window areas for drag
 		for (int i=0; i<window_areas_.size(); i++) {
-			window_areas_[i]->onDrag(x, y);
+			window_areas_[i]->OnDrag(x, y);
 		}
 	}
-	inline void onUpClick(double x, double y) {
+	inline void OnUpClick(double x, double y) {
 		// Check all window areas for up click
 		for (int i=0; i<window_areas_.size(); i++) {
-			window_areas_[i]->onUpClick(x, y);
+			window_areas_[i]->OnUpClick(x, y);
 		}
 	}
-	inline void setPlayingFile(AudioFile* file) { playing_file_ = file; }
+	inline void set_playing_file(AudioFile* file) { playing_file_ = file; }
 
-	inline WindowArea* getFilesArea() {return files_area_; }
+	inline WindowArea* get_files_area() {return files_area_; }
 private:
 	AudioFile* playing_file_;
 

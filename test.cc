@@ -83,7 +83,7 @@ static int paCallback(const void *input_buffer, void *output_buffer,
 		PaStreamCallbackFlags status_flags, void *user_data) {
 //	paData *data = (paData *) userData;
 
-	float* audio = main_window->nextBlock(frames_per_buffer, 2);
+	float* audio = main_window->GetNextBlock(frames_per_buffer, 2);
 
 //	float *inBuf = (float*) inputBuffer;
 	float *out_buf = (float*) output_buffer;
@@ -177,10 +177,10 @@ void MouseMotion(int x, int y)
 	/*
 	 *	update the mouse position
 	 */
-	the_mouse.x = (double) x / main_window->getWidth();
-	the_mouse.y = 1.0 - (double) y / main_window->getHeight();
+	the_mouse.x = (double) x / main_window->get_width();
+	the_mouse.y = 1.0 - (double) y / main_window->get_height();
 	std::cout << "Mouse Dragged: " << the_mouse.x << ", " << the_mouse.y << std::endl;
-	main_window->onDrag(the_mouse.x, the_mouse.y);
+	main_window->OnDrag(the_mouse.x, the_mouse.y);
 	glutPostRedisplay();
 }
 void MouseButton(int button,int state,int x, int y)
@@ -188,8 +188,8 @@ void MouseButton(int button,int state,int x, int y)
 	/*
 	 *	update the mouse position
 	 */
-	the_mouse.x = (double) x / main_window->getWidth();
-	the_mouse.y = 1.0 - (double) y / main_window->getHeight();
+	the_mouse.x = (double) x / main_window->get_width();
+	the_mouse.y = 1.0 - (double) y / main_window->get_height();
 
 	/*
 	 *	has the button been pressed or released?
@@ -208,9 +208,9 @@ void MouseButton(int button,int state,int x, int y)
 		// Double click recorded
 		if (time_between_clicks < DOUBLE_CLICK_TIME) {
 			std::cout << "Double click recorded" << std::endl;
-			main_window->onDoubleClick(the_mouse.x, the_mouse.y);
+			main_window->OnDoubleClick(the_mouse.x, the_mouse.y);
 		} else {
-			main_window->onClick(the_mouse.x, the_mouse.y);
+			main_window->OnClick(the_mouse.x, the_mouse.y);
 		}
 
 		/*
@@ -231,7 +231,7 @@ void MouseButton(int button,int state,int x, int y)
 		}
 	} else {
 		std::cout << "Mouse Released: " << the_mouse.x << ", " << the_mouse.y << std::endl;
-		main_window->onUpClick(the_mouse.x, the_mouse.y);
+		main_window->OnUpClick(the_mouse.x, the_mouse.y);
 	}
 
 	//	printf("Mouse: x = %d, y = %d\n", TheMouse.x, TheMouse.y);
@@ -243,8 +243,8 @@ void MouseButton(int button,int state,int x, int y)
 	glutPostRedisplay();
 }
 void MouseHover(int x, int y) {
-	the_mouse.x = (double) x / main_window->getWidth();
-	the_mouse.y = 1.0 - (double) y / main_window->getHeight();
+	the_mouse.x = (double) x / main_window->get_width();
+	the_mouse.y = 1.0 - (double) y / main_window->get_height();
 	std::cout << "Mouse Over: " << the_mouse.x << ", " << the_mouse.y << std::endl;
 	displayFunc();
 }
@@ -261,7 +261,7 @@ void displayFunc() {
 	glLoadIdentity();
 
 	// Draw stuff here
-	main_window->draw(0.0, 0.0);
+	main_window->Draw(0.0, 0.0);
 
 
 	// After drawing
@@ -317,7 +317,7 @@ void initialize_glut(int argc, char *argv[]) {
 	// double buffer, use rgb color, enable depth buffer
 	glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	// initialize the window size
-	glutInitWindowSize(main_window->getWidth(), main_window->getHeight());
+	glutInitWindowSize(main_window->get_width(), main_window->get_height());
 	// set the window postion
 	glutInitWindowPosition(0, 0);
 	// create the window

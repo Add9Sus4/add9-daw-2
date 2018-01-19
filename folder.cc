@@ -35,94 +35,94 @@ Folder::Folder(std::string path, double l, double t, double r, double b, MainWin
 		}
 		int total_errors = 0;
 		for (int i=0; i<file_names.size(); i++) {
-			AudioFile* file = new AudioFile(file_names[i], getL() + PADDING, getT() - (i + 1)*FILE_NAME_HEIGHT - PADDING,
-					getR() - PADDING, getT() - (i + 2)*FILE_NAME_HEIGHT + PADDING, main_window);
-			if (file->getFileName().compare("Error") != 0) {
-				file->setHidden(true);
-				addChildWindow(file);
+			AudioFile* file = new AudioFile(file_names[i], get_left() + PADDING, get_top() - (i + 1)*FILE_NAME_HEIGHT - PADDING,
+					get_right() - PADDING, get_top() - (i + 2)*FILE_NAME_HEIGHT + PADDING, main_window);
+			if (file->get_file_name().compare("Error") != 0) {
+				file->set_hidden(true);
+				AddChildWindow(file);
 			} else {
 				total_errors++;
 			}
 		}
-		lowest_file_y_ = getT() - (file_names.size() + 1 - total_errors)*FILE_NAME_HEIGHT + PADDING;
+		lowest_file_y_ = get_top() - (file_names.size() + 1 - total_errors)*FILE_NAME_HEIGHT + PADDING;
 		std::cout << "lowest file Y: " << lowest_file_y_ << std::endl;
-		std::cout << "bottom of files area: " << main_window->getFilesArea()->getB() << std::endl;
+		std::cout << "bottom of files area: " << main_window->get_files_area()->get_bottom() << std::endl;
 }
 
-void Folder::draw(double x_offset, double y_offset) {
+void Folder::Draw(double x_offset, double y_offset) {
 	// Draw the folder name
 	std::string abbreviated_path = path_.substr(path_.find("SAMPLES") + 8);
 	glColor3d(0.6, 0.74, 0.80);
-	Font(GLUT_BITMAP_HELVETICA_10, (char*) abbreviated_path.c_str(), normalizeCoord(getL() + 0.01), normalizeCoord(getT() - 0.01));
+	Font(GLUT_BITMAP_HELVETICA_10, (char*) abbreviated_path.c_str(), NormalizeCoord(get_left() + 0.01), NormalizeCoord(get_top() - 0.01));
 	if (open_) {
 		// Draw the open triangle icon
 		glColor3d(0.3, 0.37, 0.40);
 		glBegin(GL_LINE_STRIP);
-		glVertex2d(normalizeCoord(getL()), normalizeCoord(getT()));
-		glVertex2d(normalizeCoord(getL() + 0.005), normalizeCoord(getT()));
-		glVertex2d(normalizeCoord(getL() + 0.0025), normalizeCoord(getT() - 0.01));
-		glVertex2d(normalizeCoord(getL()), normalizeCoord(getT()));
+		glVertex2d(NormalizeCoord(get_left()), NormalizeCoord(get_top()));
+		glVertex2d(NormalizeCoord(get_left() + 0.005), NormalizeCoord(get_top()));
+		glVertex2d(NormalizeCoord(get_left() + 0.0025), NormalizeCoord(get_top() - 0.01));
+		glVertex2d(NormalizeCoord(get_left()), NormalizeCoord(get_top()));
 		glEnd();
-		for (int i=0; i<numChildWindows(); i++) {
-			getChildWindows(i)->draw(x_offset, y_offset);
+		for (int i=0; i<get_num_child_windows(); i++) {
+			get_child_window(i)->Draw(x_offset, y_offset);
 		}
 	} else {
 		// Draw the closed triangle icon
 		glColor3d(0.3, 0.37, 0.40);
 		glBegin(GL_LINE_STRIP);
-		glVertex2d(normalizeCoord(getL()), normalizeCoord(getT()));
-		glVertex2d(normalizeCoord(getL()), normalizeCoord(getT() - 0.01));
-		glVertex2d(normalizeCoord(getL() + 0.005), normalizeCoord(getT() - 0.005));
-		glVertex2d(normalizeCoord(getL()), normalizeCoord(getT()));
+		glVertex2d(NormalizeCoord(get_left()), NormalizeCoord(get_top()));
+		glVertex2d(NormalizeCoord(get_left()), NormalizeCoord(get_top() - 0.01));
+		glVertex2d(NormalizeCoord(get_left() + 0.005), NormalizeCoord(get_top() - 0.005));
+		glVertex2d(NormalizeCoord(get_left()), NormalizeCoord(get_top()));
 		glEnd();
 	}
 }
 
-bool Folder::onClick(double x, double y) {
-	double scroll_amount = getParentWindow()->getScrollAmount();
+bool Folder::OnClick(double x, double y) {
+	double scroll_amount = get_parent_window()->get_scroll_amount();
 	std::cout << "Folder clicked" << std::endl;
 	// If the click was inside the triangle
-	if (x > getL() && x < getL() + 0.005
-			&& y < getT() && y > getT() - 0.01) {
-		toggleOpen();
+	if (x > get_left() && x < get_left() + 0.005
+			&& y < get_top() && y > get_top() - 0.01) {
+		ToggleOpen();
 		return true;
 	} else {
-		for (int i=0; i<numChildWindows(); i++) {
-			getChildWindows(i)->onClick(x, y - scroll_amount);
+		for (int i=0; i<get_num_child_windows(); i++) {
+			get_child_window(i)->OnClick(x, y - scroll_amount);
 		}
 	}
 	return false;
 
 }
 
-double Folder::getMaxY() {
+double Folder::get_max_y() {
 	if (open_) {
-		double max_y = getT();
-		for (int i=0; i<numChildWindows(); i++) {
+		double max_y = get_top();
+		for (int i=0; i<get_num_child_windows(); i++) {
 			if (true) {
-				if (getChildWindows(i)->getT() > max_y) {
-					max_y = getChildWindows(i)->getT();
+				if (get_child_window(i)->get_top() > max_y) {
+					max_y = get_child_window(i)->get_top();
 				}
 			}
 		}
 		return max_y;
 	} else {
-		return getT();
+		return get_top();
 	}
 }
-double Folder::getMinY() {
+double Folder::get_min_y() {
 	if (open_) {
-		double min_y = getB();
-		for (int i=0; i<numChildWindows(); i++) {
+		double min_y = get_bottom();
+		for (int i=0; i<get_num_child_windows(); i++) {
 			if (true) {
-				if (getChildWindows(i)->getB() < min_y) {
-					min_y = getChildWindows(i)->getB();
+				if (get_child_window(i)->get_bottom() < min_y) {
+					min_y = get_child_window(i)->get_bottom();
 				}
 			}
 		}
 		return min_y;
 	} else {
-		return getB();
+		return get_bottom();
 	}
 }
 

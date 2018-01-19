@@ -19,9 +19,9 @@ namespace add9daw2 {
 
 class VerticalScrollBar {
 public:
-	VerticalScrollBar(double l, double t, double r, double b, MainWindow* main_window) :
+	VerticalScrollBar(double left, double top, double right, double bottom, MainWindow* main_window) :
 		has_been_clicked_(false), hidden_(true), diff_(0.0), lastY_(0.0), scroll_ratio_(1.0), y_offset_(0.0), parent_window_(NULL) {
-			rect_ = new Rect(l + PADDING, t - PADDING, r - PADDING, b + PADDING);
+			rect_ = new Rect(left + PADDING, top - PADDING, right - PADDING, bottom + PADDING);
 		}
 	virtual ~VerticalScrollBar() {}
 
@@ -30,16 +30,16 @@ public:
 	bool onDrag(double x, double y);
 	bool onUpClick(double x, double y);
 
-	inline double getL() { return rect_->L(); }
-	inline double getT() { return rect_->T(); }
-	inline double getR() { return rect_->R(); }
-	inline double getB() { return rect_->B(); }
+	inline double getL() { return rect_->get_left(); }
+	inline double getT() { return rect_->get_top(); }
+	inline double getR() { return rect_->get_right(); }
+	inline double getB() { return rect_->get_bottom(); }
 	inline double getScrollAmount() { return (-y_offset_ - diff_)*scroll_ratio_; }
 	inline double height() { return getT() - getB(); }
 
 	void draw(double x_offset, double y_offset);
 	inline void setHidden(bool hidden) { this->hidden_ = hidden; }
-	inline void setRect(double l, double t, double r, double b) { rect_->set(l, t, r, b); }
+	inline void setRect(double left, double top, double right, double bottom) { rect_->set(left, top, right, bottom); }
 	inline void setParentWindow(WindowArea* window_area) {this->parent_window_ = window_area; }
 	inline void setScrollRatio(double scroll_ratio)  { this->scroll_ratio_ = scroll_ratio; }
 private:

@@ -12,28 +12,28 @@ namespace add9daw2 {
 
 struct Rect {
 public:
-	Rect(double l, double t, double r, double b) : l(l), t(t), r(r), b(b) {}
+	Rect(double left, double top, double right, double bottom) : left(left), top(top), right(right), bottom(bottom) {}
 	virtual ~Rect() {}
 
-	inline void set(double l, double t, double r, double b) {
-		this->l = l;
-		this->t = t;
-		this->r = r;
-		this->b = b;
+	inline void set(double left, double top, double right, double bottom) {
+		this->left = left;
+		this->top = top;
+		this->right = right;
+		this->bottom = bottom;
 	}
-	inline void setL(double l) { this->l = l; }
-	inline void setT(double t) { this->t = t; }
-	inline void setR(double r) { this->r = r; }
-	inline void setB(double b) { this->b = b; }
+	inline void set_left(double left) { this->left = left; }
+	inline void set_top(double top) { this->top = top; }
+	inline void set_right(double right) { this->right = right; }
+	inline void set_bottom(double bottom) { this->bottom = bottom; }
 
-	inline double L() { return l; }
-	inline double T() { return t; }
-	inline double R() { return r; }
-	inline double B() { return b; }
-	inline double height() { return t - b; }
-	inline double width() { return r - l; }
+	inline double get_left() { return left; }
+	inline double get_top() { return top; }
+	inline double get_right() { return right; }
+	inline double get_bottom() { return bottom; }
+	inline double get_height() { return top - bottom; }
+	inline double get_width() { return right - left; }
 private:
-	double l, t, r, b;
+	double left, top, right, bottom;
 };
 
 } // namespace add9daw2

@@ -28,7 +28,7 @@
 
 namespace add9daw2 {
 
-inline int calculateNextPowerOfTwo(int number) {
+inline int CalculateNextPowerOfTwo(int number) {
 		unsigned int x = number;
 		while (x != (x & (~x + 1))) {
 			x++;
@@ -45,31 +45,31 @@ public:
 		 num_frames_(0), sample_rate_(44100), file_name_(file_name) {}
 	virtual ~AudioFile() {}
 
-	bool getAudio(float* empty_block, int frames_per_buffer, int channels);
-	inline bool isMono() { return num_channels_ == MONO; }
-	inline bool isStereo() { return num_channels_ == STEREO; }
-	bool onClick(double x, double y) override;
+	bool GetAudio(float* empty_block, int frames_per_buffer, int channels);
+	inline bool is_mono() { return num_channels_ == MONO; }
+	inline bool is_stereo() { return num_channels_ == STEREO; }
+	bool OnClick(double x, double y) override;
 
-	double* getAudioFromChannel(int channel);
-	double* getAudioFromChannel(int channel, int start_frame, int end_frame);
+	double* GetAudioFromChannel(int channel);
+	double* GetAudioFromChannel(int channel, int start_frame, int end_frame);
 
-	inline int getNumChannels() { return num_channels_; }
-	inline int getNumFrames() { return num_frames_; }
-	inline int getSampleRate() { return sample_rate_; }
+	inline int get_num_channels() { return num_channels_; }
+	inline int get_num_frames() { return num_frames_; }
+	inline int get_sample_rate() { return sample_rate_; }
 
-	inline std::string getFileName() { return file_name_; }
+	inline std::string get_file_name() { return file_name_; }
 
-	void draw(double x_offset, double y_offset) override;
-	void invertPhase();
-	void loadAudio();
-	void normalize();
-	void zeroPad();
-	void zeroPad(int new_length);
-	void removeLeadingZeros();
-	void removeLeadingZeros(double threshold);
-	void removeTrailingZeros();
-	void removeTrailingZeros(double threshold);
-	void trimFromEnd(int num_samples);
+	void Draw(double x_offset, double y_offset) override;
+	void InvertPhase();
+	void LoadAudio();
+	void Normalize();
+	void ZeroPad();
+	void ZeroPad(int new_length);
+	void RemoveLeadingZeros();
+	void RemoveLeadingZeros(double threshold);
+	void RemoveTrailingZeros();
+	void RemoveTrailingZeros(double threshold);
+	void TrimFromEnd(int num_samples);
 
 private:
 	int current_position_, num_channels_, num_frames_, sample_rate_;

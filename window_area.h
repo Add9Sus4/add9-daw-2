@@ -26,52 +26,52 @@ class VerticalScrollBar;
 
 class WindowArea {
 public:
-	WindowArea(double l, double t, double r, double b, MainWindow* main_window);
+	WindowArea(double left, double top, double right, double bottom, MainWindow* main_window);
 	virtual ~WindowArea() {}
 
-	inline bool isHidden() { return hidden_; }
-	inline virtual bool isInWindow(double x, double y) { return x > getL() && x < getR() && y < getT() && y > getB(); }
-	virtual bool onClick(double x, double y);
-	virtual bool onDoubleClick(double x, double y);
-	virtual bool onDrag(double x, double y);
-	virtual bool onUpClick(double x, double y);
+	inline bool is_hidden() { return hidden_; }
+	inline virtual bool is_in_window(double x, double y) { return x > get_left() && x < get_right() && y < get_top() && y > get_bottom(); }
+	virtual bool OnClick(double x, double y);
+	virtual bool OnDoubleClick(double x, double y);
+	virtual bool OnDrag(double x, double y);
+	virtual bool OnUpClick(double x, double y);
 
-	inline double getL() { return rect_->L(); }
-	inline double getT() { return rect_->T(); }
-	inline double getR() { return rect_->R(); }
-	inline double getB() { return rect_->B(); }
-	virtual double getMaxY();
-	virtual double getMinY();
-	double getScrollAmount();
-	inline double height() { return rect_->height(); }
-	inline double width() { return rect_->width(); }
+	inline double get_left() { return rect_->get_left(); }
+	inline double get_top() { return rect_->get_top(); }
+	inline double get_right() { return rect_->get_right(); }
+	inline double get_bottom() { return rect_->get_bottom(); }
+	virtual double get_max_y();
+	virtual double get_min_y();
+	double get_scroll_amount();
+	inline double get_height() { return rect_->get_height(); }
+	inline double get_width() { return rect_->get_width(); }
 
-	inline int numChildWindows() { return child_windows_.size(); }
+	inline int get_num_child_windows() { return child_windows_.size(); }
 
-	inline MainWindow* getMainWindow() { return main_window_; }
+	inline MainWindow* get_main_window() { return main_window_; }
 
-	inline Rect *getRect() { return rect_; }
+	inline Rect *get_rect() { return rect_; }
 
-	inline void addChildWindow(WindowArea* window_area) {
+	inline void AddChildWindow(WindowArea* window_area) {
 		child_windows_.push_back(window_area);
-		window_area->setParentWindow(this);
+		window_area->set_parent_window(this);
 	}
-	virtual void draw(double x_offset, double y_offset);
+	virtual void Draw(double x_offset, double y_offset);
 	void Font(void *font, char *text, double x, double y);
-	void hideScrollBar();
-	inline void setHidden(bool hidden) { this->hidden_ = hidden; }
-	inline void setL(double l) { rect_->setL(l); }
-	inline void setT(double t) { rect_->setT(t); }
-	inline void setR(double r) { rect_->setR(r); }
-	inline void setB(double b) { rect_->setB(b); }
-	inline void setName(std::string name) { this->name_ = name; }
-	inline void setParentWindow(WindowArea* window_area) {this->parent_window_ = window_area; }
-	inline void setRect(double l, double t, double r, double b) { rect_->set(l, t, r, b); }
+	void HideScrollBar();
+	inline void set_hidden(bool hidden) { this->hidden_ = hidden; }
+	inline void set_left(double left) { rect_->set_left(left); }
+	inline void set_top(double top) { rect_->set_top(top); }
+	inline void set_right(double right) { rect_->set_right(right); }
+	inline void set_bottom(double bottom) { rect_->set_bottom(bottom); }
+	inline void set_name(std::string name) { this->name_ = name; }
+	inline void set_parent_window(WindowArea* window_area) {this->parent_window_ = window_area; }
+	inline void set_rect(double left, double top, double right, double bottom) { rect_->set(left, top, right, bottom); }
 
-	inline WindowArea* getChildWindows(int i) { return child_windows_[i]; }
-	inline WindowArea* getParentWindow() { return parent_window_; }
+	inline WindowArea* get_child_window(int child_window_index) { return child_windows_[child_window_index]; }
+	inline WindowArea* get_parent_window() { return parent_window_; }
 protected:
-	inline double normalizeCoord(double coord) { return coord * 2.0 - 1.0; }
+	inline double NormalizeCoord(double coord) { return coord * 2.0 - 1.0; }
 private:
 	bool hidden_;
 

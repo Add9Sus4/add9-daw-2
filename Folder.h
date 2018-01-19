@@ -24,18 +24,18 @@ public:
 	Folder(std::string path, double l, double t, double r, double b, MainWindow* main_window);
 	virtual ~Folder() {}
 
-	void draw(double x_offset, double y_offset) override;
-	inline void toggleOpen() {
+	void Draw(double x_offset, double y_offset) override;
+	inline void ToggleOpen() {
 		open_ = !open_;
-		for (int i=0; i<numChildWindows(); i++) {
-			getChildWindows(i)->setHidden(!open_);
+		for (int i=0; i<get_num_child_windows(); i++) {
+			get_child_window(i)->set_hidden(!open_);
 		}
 	}
 
-	bool onClick(double x, double y) override;
+	bool OnClick(double x, double y) override;
 
-	double getMaxY() override;
-	double getMinY() override;
+	double get_max_y() override;
+	double get_min_y() override;
 
 private:
 	bool open_;
