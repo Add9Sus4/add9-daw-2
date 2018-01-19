@@ -28,47 +28,68 @@ namespace add9daw2 {
 
 class WindowArea;
 
+// The main window in the DAW.
+// Handles the organization of all sub-windows.
+// Also responsible for getting audio to send to the output.
 class MainWindow {
 public:
 	MainWindow(int height, int width, int frames_per_buffer, int channels);
 	virtual ~MainWindow();
 
+	// Gets the next block of audio to send to the output.
+	// If an audio file is currently playing, this will get that audio.
+	// Otherwise, it will send silence.
 	float* GetNextBlock(int frames_per_buffer, int channels);
 
+	// Returns the height of the main window.
 	inline int get_height() { return height_; }
+
+	// Returns the width of the main window.
 	inline int get_width() { return width_; }
 
+	// Handles the drawing of all sub-windows.
 	inline void Draw(double x_offset, double y_offset) {
 		for (int i=0; i<window_areas_.size(); i++) {
 			window_areas_[i]->Draw(x_offset, y_offset);
 		}
 	}
+
+	// Handles all clicks in the main window area.
 	inline void OnClick(double x, double y) {
 		// Check all window areas for click
 		for (int i=0; i<window_areas_.size(); i++) {
 			window_areas_[i]->OnClick(x, y);
 		}
 	}
+
+	// Handles all double clicks in the main window area.
 	inline void OnDoubleClick(double x, double y) {
 		// Check all window areas for double click
 		for (int i=0; i<window_areas_.size(); i++) {
 			window_areas_[i]->OnDoubleClick(x, y);
 		}
 	}
+
+	// Handles all mouse drag events in the main window area.
 	inline void OnDrag(double x, double y) {
 		// Check all window areas for drag
 		for (int i=0; i<window_areas_.size(); i++) {
 			window_areas_[i]->OnDrag(x, y);
 		}
 	}
+
+	// Handles all mouse release events in the main window area.
 	inline void OnUpClick(double x, double y) {
 		// Check all window areas for up click
 		for (int i=0; i<window_areas_.size(); i++) {
 			window_areas_[i]->OnUpClick(x, y);
 		}
 	}
+
+	// Sets the currently playing file to the specified audio file.
 	inline void set_playing_file(AudioFile* file) { playing_file_ = file; }
 
+	// Returns a reference to the window representing the files area.
 	inline WindowArea* get_files_area() {return files_area_; }
 private:
 	AudioFile* playing_file_;

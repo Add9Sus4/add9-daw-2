@@ -11,7 +11,7 @@
 
 namespace add9daw2 {
 
-bool AudioFile::GetAudio(float* empty_block, int frames_per_buffer, int channels) {
+bool AudioFile::FillBlockWithAudio(float* empty_block, int frames_per_buffer, int channels) {
 	// If the audio is mono and output is mono
 	if (is_mono() && channels == MONO) {
 		// If there is at least one full block of audio left to send
@@ -149,7 +149,7 @@ bool AudioFile::GetAudio(float* empty_block, int frames_per_buffer, int channels
 	return false;
 }
 bool AudioFile::OnClick(double x, double y) {
-	bool in_window = is_in_window(x, y);
+	bool in_window = is_coordinate_in_window(x, y);
 	// Check all window areas for click
 	if (in_window) {
 		LoadAudio();

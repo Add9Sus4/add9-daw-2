@@ -17,6 +17,8 @@ namespace add9daw2 {
 
 class WindowArea;
 
+// Represents a track of audio within the DAW.
+// Handles the positioning and arrangement of audio files within a track.
 class AudioTrack : public WindowArea {
 public:
 	AudioTrack(double l, double t, double r, double b, MainWindow* main_window) : WindowArea(l, t, r, b, main_window) {};

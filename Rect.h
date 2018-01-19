@@ -10,6 +10,8 @@
 
 namespace add9daw2 {
 
+// Defines a rectangular boundary
+// Used to store the dimensions of windows in the DAW
 struct Rect {
 public:
 	Rect(double left, double top, double right, double bottom) : left(left), top(top), right(right), bottom(bottom) {}

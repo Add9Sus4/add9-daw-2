@@ -8,6 +8,8 @@
 #ifndef ADD9DAW2_SRC_RESOURCES_H_
 #define ADD9DAW2_SRC_RESOURCES_H_
 
+// Used to store commonly used folder paths
+
 namespace add9daw2 {
 
 // Percussion

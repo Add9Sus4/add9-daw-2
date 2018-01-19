@@ -46,7 +46,7 @@ MainWindow::~MainWindow() {
 float* MainWindow::GetNextBlock(int frames_per_buffer, int channels) {
 	float* block = new float[frames_per_buffer*channels];
 	if (playing_file_) {
-		bool playing = playing_file_->GetAudio(block, frames_per_buffer, channels);
+		bool playing = playing_file_->FillBlockWithAudio(block, frames_per_buffer, channels);
 		if (!playing) {
 			playing_file_ = NULL;
 		}
