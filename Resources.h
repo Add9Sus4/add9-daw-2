@@ -8,6 +8,8 @@
 #ifndef ADD9DAW2_SRC_RESOURCES_H_
 #define ADD9DAW2_SRC_RESOURCES_H_
 
+namespace add9daw2 {
+
 // Percussion
 #define EIGHT_O_EIGHT_DIR_PATH	"/Users/aarondawson/Add9 Samples/SAMPLES/Percussion/808s"
 #define CLAP_DIR_PATH			"/Users/aarondawson/Add9 Samples/SAMPLES/Percussion/Claps"
@@ -33,6 +35,6 @@
 #define SWEEP_DOWN_DIR_PATH		"/Users/aarondawson/Add9 Samples/SAMPLES/FX/Sweep Downs"
 #define SWEEP_UP_DIR_PATH		"/Users/aarondawson/Add9 Samples/SAMPLES/FX/Sweep Ups"
 
-
+} // namespace add9daw2
 
 #endif /* ADD9DAW2_SRC_RESOURCES_H_ */

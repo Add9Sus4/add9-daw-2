@@ -5,9 +5,11 @@
  *      Author: aarondawson
  */
 
-#include "WindowArea.h"
 #include "MainWindow.h"
+#include "WindowArea.h"
 #include "VerticalScrollBar.h"
+
+namespace add9daw2 {
 
 WindowArea::WindowArea(double l, double t, double r, double b, MainWindow* mainWindow) : hidden(false) {
 	srand(time(NULL));
@@ -47,7 +49,7 @@ void WindowArea::draw(double x_offset, double y_offset) {
 
 	// If there is vertical overflow, show vertical scroll bar
 	if (overFlowTop > 0.0 || overFlowBottom > 0.0) {
-		cout << "overFlow: " << overFlowBottom << endl;
+		std::cout << "overFlow: " << overFlowBottom << std::endl;
 		verticalScrollBar->setHidden(false);
 		double scrollBarHeight = height() * height() / (height() + overFlowBottom); // Set height of scroll bar
 		verticalScrollBar->setScrollRatio(overFlowBottom / (height() - scrollBarHeight - PADDING*2));
@@ -132,4 +134,4 @@ double WindowArea::getMinY() {
 	return minY;
 }
 
-
+} // namespace add9daw2

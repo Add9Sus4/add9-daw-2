@@ -9,15 +9,18 @@
 #define ADD9DAW2_SRC_VERTICALSCROLLBAR_H_
 
 #include <GLUT/glut.h>
+
 #include "Rect.h"
 #include "WindowArea.h"
 
 class MainWindow;
 
+namespace add9daw2 {
+
 class VerticalScrollBar {
 public:
 	VerticalScrollBar(double l, double t, double r, double b, MainWindow* mainWindow) :
-		hidden(true), hasBeenClicked(false), lastY(0.0), yOffset(0.0), diff(0.0), scrollRatio(1.0), mainWindow(mainWindow), parentWindow(NULL) {
+		hidden(true), hasBeenClicked(false), lastY(0.0), yOffset(0.0), diff(0.0), scrollRatio(1.0), parentWindow(NULL) {
 			rect = new Rect(l + PADDING, t - PADDING, r - PADDING, b + PADDING);
 		}
 	virtual ~VerticalScrollBar() {}
@@ -42,10 +45,11 @@ private:
 	double lastY;
 	double yOffset, diff;
 	double scrollRatio;
-	MainWindow* mainWindow;
 	WindowArea* parentWindow;
 	Rect* rect;
 	inline double normalizeCoord(double coord) { return coord * 2.0 - 1.0; }
 };
+
+} // namespace add9daw2
 
 #endif /* ADD9DAW2_SRC_VERTICALSCROLLBAR_H_ */

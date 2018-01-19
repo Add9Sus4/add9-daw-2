@@ -14,23 +14,32 @@
 #define RIGHT	1
 #define LR_AVG	2
 
-#include <algorithm>
 #include <dirent.h>
-#include <functional>
 #include <GLUT/glut.h>
-#include <iostream>
 #include <math.h>
 #include <sndfile.h>
-#include <string>
 #include <unistd.h>
+
+#include <string>
 #include <vector>
+
 #include "WindowArea.h"
 
+namespace add9daw2 {
 
+inline int calculateNextPowerOfTwo(int number) {
+		unsigned int x = number;
+		while (x != (x & (~x + 1))) {
+			x++;
+		}
+		return x;
+	}
+
+class MainWindow;
 
 class AudioFile : public WindowArea {
 public:
-	AudioFile(string fileName, double l, double t, double r, double b, MainWindow* mainWindow) :
+	AudioFile(std::string fileName, double l, double t, double r, double b, MainWindow* mainWindow) :
 		WindowArea(l, t, r, b, mainWindow), fileName_(fileName), numChannels_(MONO),
 		 numFrames_(0), sampleRate_(44100), currentPosition_(0) {}
 	virtual ~AudioFile() {}
@@ -46,9 +55,9 @@ public:
 	double* getAudioFromChannel(int channel);
 	double* getAudioFromChannel(int channel, int startFrame, int endFrame);
 
-	void draw(double x_offset, double y_offset);
+	void draw(double x_offset, double y_offset) override;
 
-	bool onClick(double x, double y);
+	bool onClick(double x, double y) override;
 
 	void zeroPad(int newLength);
 	void zeroPad();
@@ -80,16 +89,10 @@ private:
 	int numFrames_;
 	int sampleRate_;
 
-	inline int calculateNextPowerOfTwo(int number) {
-		unsigned int x = number;
-		while (x != (x & (~x + 1))) {
-			x++;
-		}
-		return x;
-	}
-
 	int currentPosition_;
 
 };
+
+} // namespace add9daw2
 
 #endif /* ADD9DAW2_SRC_AUDIOFILE_H_ */

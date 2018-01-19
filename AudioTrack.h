@@ -13,10 +13,16 @@
 
 #include "WindowArea.h"
 
+namespace add9daw2 {
+
+class WindowArea;
+
 class AudioTrack : public WindowArea {
 public:
 	AudioTrack(double l, double t, double r, double b, MainWindow* mainWindow) : WindowArea(l, t, r, b, mainWindow) {};
 	virtual ~AudioTrack() {}
 };
+
+} // namespace add9daw2
 
 #endif /* ADD9DAW2_SRC_AUDIOTRACK_H_ */

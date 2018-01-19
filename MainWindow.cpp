@@ -6,15 +6,17 @@
  */
 
 #include "MainWindow.h"
+#include "WindowArea.h"
 
-MainWindow::MainWindow(int height, int width, int framesPerBuffer, int channels) : height(height), width(width),
-	framesPerBuffer(framesPerBuffer), channels(channels) {
+namespace add9daw2 {
+
+MainWindow::MainWindow(int height, int width, int framesPerBuffer, int channels) : height(height), width(width) {
 	playingFile = NULL; // No audio file currently playing
 	// Add window areas to main window
-	arrangeArea = new WindowArea(arrangeAreaLeftSeparator, arrangeAreaTopSeparator, rightOfScreen, effectsAreaTopSeparator, this);
-	effectsArea = new WindowArea(leftOfScreen, effectsAreaTopSeparator, rightOfScreen, bottomOfScreen, this);
-	filesArea = new WindowArea(leftOfScreen, arrangeAreaTopSeparator, arrangeAreaLeftSeparator, effectsAreaTopSeparator, this);
-	topMenuArea = new WindowArea(leftOfScreen, topOfScreen, rightOfScreen, arrangeAreaTopSeparator, this);
+	arrangeArea = new WindowArea(ARRANGE_AREA_LEFT_SEPARATOR, ARRANGE_AREA_TOP_SEPARATOR, RIGHT_OF_SCREEN, EFFECTS_AREA_TOP_SEPARATOR, this);
+	effectsArea = new WindowArea(LEFT_OF_SCREEN, EFFECTS_AREA_TOP_SEPARATOR, RIGHT_OF_SCREEN, BOTTOM_OF_SCREEN, this);
+	filesArea = new WindowArea(LEFT_OF_SCREEN, ARRANGE_AREA_TOP_SEPARATOR, ARRANGE_AREA_LEFT_SEPARATOR, EFFECTS_AREA_TOP_SEPARATOR, this);
+	topMenuArea = new WindowArea(LEFT_OF_SCREEN, TOP_OF_SCREEN, RIGHT_OF_SCREEN, ARRANGE_AREA_TOP_SEPARATOR, this);
 	windowAreas.push_back(arrangeArea);
 	windowAreas.push_back(effectsArea);
 	windowAreas.push_back(filesArea);
@@ -54,3 +56,5 @@ float* MainWindow::nextBlock(int framesPerBuffer, int channels) {
 	}
 	return block;
 }
+
+} // namespace add9daw2

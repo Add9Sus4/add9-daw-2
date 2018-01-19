@@ -8,7 +8,9 @@
 #ifndef ADD9DAW2_SRC_RECT_H_
 #define ADD9DAW2_SRC_RECT_H_
 
-class Rect {
+namespace add9daw2 {
+
+struct Rect {
 public:
 	Rect(double l, double t, double r, double b) : l(l), t(t), r(r), b(b) {}
 	virtual ~Rect() {}
@@ -31,5 +33,7 @@ public:
 private:
 	double l, t, r, b;
 };
+
+} // namespace add9daw2
 
 #endif /* ADD9DAW2_SRC_RECT_H_ */

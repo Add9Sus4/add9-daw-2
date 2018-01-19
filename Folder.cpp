@@ -7,8 +7,11 @@
 
 #include "Folder.h"
 #include "MainWindow.h"
+#include "WindowArea.h"
 
-Folder::Folder(string path, double l, double t, double r, double b, MainWindow* mainWindow) : WindowArea(l, t, r, b, mainWindow), path(path), open(false) {
+namespace add9daw2 {
+
+Folder::Folder(std::string path, double l, double t, double r, double b, MainWindow* mainWindow) : WindowArea(l, t, r, b, mainWindow), path(path), open(false) {
 	std::vector<std::string> fileNames;
 	//	std::cout << "Loading files from " << dirName << "..." << std::endl;
 		DIR *directory;
@@ -41,13 +44,13 @@ Folder::Folder(string path, double l, double t, double r, double b, MainWindow* 
 			}
 		}
 		lowestFileY = getT() - (fileNames.size() + 1 - total_errors)*FILE_NAME_HEIGHT + PADDING;
-		cout << "lowest file Y: " << lowestFileY << endl;
-		cout << "bottom of files area: " << mainWindow->filesArea->getB() << endl;
+		std::cout << "lowest file Y: " << lowestFileY << std::endl;
+		std::cout << "bottom of files area: " << mainWindow->getFilesArea()->getB() << std::endl;
 }
 
 void Folder::draw(double x_offset, double y_offset) {
 	// Draw the folder name
-	string abbrevPath = path.substr(path.find("SAMPLES") + 8);
+	std::string abbrevPath = path.substr(path.find("SAMPLES") + 8);
 	glColor3d(0.6, 0.74, 0.80);
 	Font(GLUT_BITMAP_HELVETICA_10, (char*) abbrevPath.c_str(), normalizeCoord(getL() + 0.01), normalizeCoord(getT() - 0.01));
 	if (open) {
@@ -59,8 +62,8 @@ void Folder::draw(double x_offset, double y_offset) {
 		glVertex2d(normalizeCoord(getL() + 0.0025), normalizeCoord(getT() - 0.01));
 		glVertex2d(normalizeCoord(getL()), normalizeCoord(getT()));
 		glEnd();
-		for (int i=0; i<childWindows.size(); i++) {
-			childWindows[i]->draw(x_offset, y_offset);
+		for (int i=0; i<numChildWindows(); i++) {
+			getChildWindows(i)->draw(x_offset, y_offset);
 		}
 	} else {
 		// Draw the closed triangle icon
@@ -75,16 +78,16 @@ void Folder::draw(double x_offset, double y_offset) {
 }
 
 bool Folder::onClick(double x, double y) {
-	double scrollAmount = parentWindow->getScrollAmount();
-	cout << "Folder clicked" << endl;
+	double scrollAmount = getParentWindow()->getScrollAmount();
+	std::cout << "Folder clicked" << std::endl;
 	// If the click was inside the triangle
 	if (x > getL() && x < getL() + 0.005
 			&& y < getT() && y > getT() - 0.01) {
 		toggleOpen();
 		return true;
 	} else {
-		for (int i=0; i<childWindows.size(); i++) {
-			childWindows[i]->onClick(x, y - scrollAmount);
+		for (int i=0; i<numChildWindows(); i++) {
+			getChildWindows(i)->onClick(x, y - scrollAmount);
 		}
 	}
 	return false;
@@ -94,10 +97,10 @@ bool Folder::onClick(double x, double y) {
 double Folder::getMaxY() {
 	if (open) {
 		double maxY = getT();
-		for (int i=0; i<childWindows.size(); i++) {
+		for (int i=0; i<numChildWindows(); i++) {
 			if (true) {
-				if (childWindows[i]->getT() > maxY) {
-					maxY = childWindows[i]->getT();
+				if (getChildWindows(i)->getT() > maxY) {
+					maxY = getChildWindows(i)->getT();
 				}
 			}
 		}
@@ -109,10 +112,10 @@ double Folder::getMaxY() {
 double Folder::getMinY() {
 	if (open) {
 		double minY = getB();
-		for (int i=0; i<childWindows.size(); i++) {
+		for (int i=0; i<numChildWindows(); i++) {
 			if (true) {
-				if (childWindows[i]->getB() < minY) {
-					minY = childWindows[i]->getB();
+				if (getChildWindows(i)->getB() < minY) {
+					minY = getChildWindows(i)->getB();
 				}
 			}
 		}
@@ -121,3 +124,5 @@ double Folder::getMinY() {
 		return getB();
 	}
 }
+
+} // namespace add9daw2

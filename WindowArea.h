@@ -11,13 +11,15 @@
 #define PADDING						0.001
 #define VERTICAL_SCROLL_BAR_WIDTH	0.01
 
-#include <iostream>
-#include <vector>
 #include <stdlib.h>
+
+#include <iostream>
 #include <string>
+#include <vector>
+
 #include "Rect.h"
 
-using namespace std;
+namespace add9daw2 {
 
 class MainWindow;
 class VerticalScrollBar;
@@ -36,7 +38,7 @@ public:
 		windowArea->setParentWindow(this);
 	}
 	void Font(void *font, char *text, double x, double y);
-	inline void setName(string name) { this->name = name; }
+	inline void setName(std::string name) { this->name = name; }
 	inline void setHidden(bool hidden) { this->hidden = hidden; }
 	inline void setParentWindow(WindowArea* windowArea) {this->parentWindow = windowArea; }
 	void hideScrollBar();
@@ -59,16 +61,23 @@ public:
 	virtual double getMaxY();
 	virtual double getMinY();
 	inline Rect *getRect() { return rect; }
+	inline WindowArea* getParentWindow() { return parentWindow; }
+	inline MainWindow* getMainWindow() { return mainWindow; }
+	inline WindowArea* getChildWindows(int i) { return childWindows[i]; }
+	inline int numChildWindows() { return childWindows.size(); }
+
+protected:
+	inline double normalizeCoord(double coord) { return coord * 2.0 - 1.0; }
+private:
 	WindowArea* parentWindow;
 	VerticalScrollBar* verticalScrollBar;
-	vector<WindowArea*> childWindows;
-protected:
+	std::vector<WindowArea*> childWindows;
 	bool hidden;
-	inline double normalizeCoord(double coord) { return coord * 2.0 - 1.0; }
 	MainWindow* mainWindow;
-private:
 	Rect* rect;
-	string name;
+	std::string name;
 };
+
+} // namespace add9daw2
 
 #endif /* ADD9DAW2_SRC_WINDOWAREA_H_ */

@@ -8,6 +8,8 @@
 #include "AudioFile.h"
 #include "MainWindow.h"
 
+namespace add9daw2 {
+
 const double AudioFile::ZERO_REMOVAL_THRESHOLD = 0.00001;
 
 void AudioFile::loadAudio() {
@@ -106,15 +108,15 @@ double* AudioFile::getAudioFromChannel(int channel, int startFrame, int endFrame
 }
 
 void AudioFile::draw(double x_offset, double y_offset) {
-	if (getL() + x_offset < parentWindow->parentWindow->getL() ||
-		getT() + y_offset > parentWindow->parentWindow->getT() - 0.01 ||
-		getR() + x_offset > parentWindow->parentWindow->getR() ||
-		getB() + y_offset < parentWindow->parentWindow->getB()) {
+	if (getL() + x_offset < getParentWindow()->getParentWindow()->getL() ||
+		getT() + y_offset > getParentWindow()->getParentWindow()->getT() - 0.01 ||
+		getR() + x_offset > getParentWindow()->getParentWindow()->getR() ||
+		getB() + y_offset < getParentWindow()->getParentWindow()->getB()) {
 		setHidden(true);
 	} else {
 		setHidden(false);
 	}
-	if (hidden) { return; }
+	if (isHidden()) { return; }
 	// Draw the folder name
 //	string abbrevPath = fileName_.substr(fileName_.find("/"));
 	glColor3d(0.6, 0.74, 0.80);
@@ -126,8 +128,8 @@ bool AudioFile::onClick(double x, double y) {
 	// Check all window areas for click
 	if (inWindow) {
 		loadAudio();
-		cout << fileName_ << " clicked!" << endl;
-		mainWindow->setPlayingFile(this);
+		std::cout << fileName_ << " clicked!" << std::endl;
+		getMainWindow()->setPlayingFile(this);
 	}
 	return inWindow;
 }
@@ -399,3 +401,4 @@ bool AudioFile::getAudio(float* emptyBlock, int framesPerBuffer, int channels) {
 	return false;
 }
 
+} // namespace add9daw2

@@ -8,24 +8,26 @@
 #ifndef ADD9DAW2_SRC_MAINWINDOW_H_
 #define ADD9DAW2_SRC_MAINWINDOW_H_
 
-#define effectsAreaTopSeparator		0.19
-#define arrangeAreaLeftSeparator	0.2
-#define arrangeAreaTopSeparator		0.96
-#define leftOfScreen				0.0
-#define topOfScreen					1.0
-#define rightOfScreen				1.0
-#define bottomOfScreen				0.0
+#define EFFECTS_AREA_TOP_SEPARATOR	0.19
+#define ARRANGE_AREA_LEFT_SEPARATOR	0.2
+#define ARRANGE_AREA_TOP_SEPARATOR	0.96
+#define LEFT_OF_SCREEN				0.0
+#define TOP_OF_SCREEN				1.0
+#define RIGHT_OF_SCREEN				1.0
+#define BOTTOM_OF_SCREEN			0.0
 
 #include <GLUT/glut.h>
+
 #include <iostream>
+
 #include "AudioTrack.h"
 #include "Folder.h"
 #include "Resources.h"
-#include "WindowArea.h"
 
-using namespace std;
-// bottom to top = 0.0 to 1.0
-// left to right = 0.0 to 1.0
+namespace add9daw2 {
+
+class WindowArea;
+
 class MainWindow {
 public:
 	MainWindow(int height, int width, int framesPerBuffer, int channels);
@@ -63,15 +65,18 @@ public:
 	float* nextBlock(int framesPerBuffer, int channels);
 	inline int getHeight() { return height; }
 	inline int getWidth() { return width; }
+	inline WindowArea* getFilesArea() {return filesArea; }
+private:
 	int height, width;
 	WindowArea* arrangeArea;
 	WindowArea* effectsArea;
 	WindowArea* filesArea;
 	WindowArea* topMenuArea;
-	vector<WindowArea*> windowAreas;
-	int framesPerBuffer, channels;
+	std::vector<WindowArea*> windowAreas;
 	AudioFile* playingFile;
 
 };
+
+} // namespace add9daw2
 
 #endif /* ADD9DAW2_SRC_MAINWINDOW_H_ */

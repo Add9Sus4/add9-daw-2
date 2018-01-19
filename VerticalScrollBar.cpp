@@ -8,6 +8,8 @@
 #include "VerticalScrollBar.h"
 #include "MainWindow.h"
 
+namespace add9daw2 {
+
 void VerticalScrollBar::draw(double x_offset, double y_offset) {
 	if (hidden) { return; }
 	glColor3d(0.3, 0.37, 0.40);
@@ -24,7 +26,7 @@ void VerticalScrollBar::draw(double x_offset, double y_offset) {
 bool VerticalScrollBar::onClick(double x, double y) {
 	if (hidden) { return false; }
 	if (x > getL() && x < getR() && y < getT() && y > getB()) {
-		cout << "Scroll bar clicked" << endl;
+		std::cout << "Scroll bar clicked" << std::endl;
 		hasBeenClicked = true;
 		lastY = y;
 		diff = 0;
@@ -55,3 +57,5 @@ bool VerticalScrollBar::onDrag(double x, double y) {
 	}
 	return true;
 }
+
+} // namespace add9daw2

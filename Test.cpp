@@ -5,12 +5,13 @@
  *      Author: aarondawson
  */
 
-#include <time.h>
-#include <ctime>
-#include <sys/timeb.h>
 #include <math.h>
-#include <sndfile.h>
 #include <portaudio.h>
+#include <sndfile.h>
+#include <sys/timeb.h>
+#include <time.h>
+
+#include <ctime>
 
 #include "MainWindow.h"
 
@@ -21,6 +22,8 @@
 #define AMP_DB 				8.685889638065036553
 #define MIN_FREQ			1
 #define MAX_FREQ			44100/2
+
+namespace add9daw2 {
 
 typedef struct {
 	float amplitude1;
@@ -87,11 +90,11 @@ double AmpToDB(double amp) {
 static int paCallback(const void *inputBuffer, void *outputBuffer,
 		unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo,
 		PaStreamCallbackFlags statusFlags, void *userData) {
-	paData *data = (paData *) userData;
+//	paData *data = (paData *) userData;
 
 	float* audio = mainWindow->nextBlock(framesPerBuffer, 2);
 
-	float *inBuf = (float*) inputBuffer;
+//	float *inBuf = (float*) inputBuffer;
 	float *outBuf = (float*) outputBuffer;
 
 	for (int i=0; i<framesPerBuffer; i++) {
@@ -206,14 +209,14 @@ void MouseButton(int button,int state,int x, int y)
 		TheMouse.ypress = TheMouse.y;
 		// Check for double click
 		int current_time = getMilliSpan(start_time);
-		cout << "Mouse Pressed: " << TheMouse.x << ", " << TheMouse.y << endl;
+		std::cout << "Mouse Pressed: " << TheMouse.x << ", " << TheMouse.y << std::endl;
 		int time_between_clicks = current_time - last_time;
-		cout << "Time elapsed: " << time_between_clicks << endl;
+		std::cout << "Time elapsed: " << time_between_clicks << std::endl;
 		last_time = getMilliSpan(start_time);
 
 		// Double click recorded
 		if (time_between_clicks < DOUBLE_CLICK_TIME) {
-			cout << "Double click recorded" << endl;
+			std::cout << "Double click recorded" << std::endl;
 			mainWindow->onDoubleClick(TheMouse.x, TheMouse.y);
 		} else {
 			mainWindow->onClick(TheMouse.x, TheMouse.y);
@@ -236,7 +239,7 @@ void MouseButton(int button,int state,int x, int y)
 			break;
 		}
 	} else {
-		cout << "Mouse Released: " << TheMouse.x << ", " << TheMouse.y << endl;
+		std::cout << "Mouse Released: " << TheMouse.x << ", " << TheMouse.y << std::endl;
 		mainWindow->onUpClick(TheMouse.x, TheMouse.y);
 	}
 
@@ -251,7 +254,7 @@ void MouseButton(int button,int state,int x, int y)
 void MouseHover(int x, int y) {
 	TheMouse.x = (double) x / mainWindow->getWidth();
 	TheMouse.y = 1.0 - (double) y / mainWindow->getHeight();
-	cout << "Mouse Over: " << TheMouse.x << ", " << TheMouse.y << endl;
+	std::cout << "Mouse Over: " << TheMouse.x << ", " << TheMouse.y << std::endl;
 	displayFunc();
 }
 void displayFunc() {
@@ -355,8 +358,10 @@ void initialize_glut(int argc, char *argv[]) {
 	initialize_graphics();
 }
 
+} // namespace add9daw2
 
 int main(int argc, char **argv) {
+	using namespace add9daw2;
 	start_time = getMilliCount();
 	last_time = getMilliSpan(start_time);
 
@@ -365,6 +370,3 @@ int main(int argc, char **argv) {
 	initialize_glut(argc, argv);
 	runPortAudio();
 }
-
-
-
