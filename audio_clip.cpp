@@ -43,6 +43,9 @@ bool AudioClip::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 }
 
 Rect AudioClip::Draw() {
+	// Set bounds on clip
+	left_ = get_parent()->get_left() + (double) start_in_samples_ * width_of_sample_;
+	right_ = get_parent()->get_left() + (double) end_in_samples_ * width_of_sample_;
 	// Draw clip start
 	glColor3d(color.r, color.g, color.b);
 	glBegin(GL_LINE_STRIP);

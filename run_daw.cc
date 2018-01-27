@@ -229,8 +229,20 @@ void InitializeGlut(int argc, char *argv[]) {
 static int PaCallback(const void *input_buffer, void *output_buffer,
 		unsigned long frames_per_buffer, const PaStreamCallbackTimeInfo* time_info,
 		PaStreamCallbackFlags status_flags, void *user_data) {
-//	if (mouse->is_playing()) {
-	double* audio_data = arrangeWindow->GetAudio(frames_per_buffer, output_channels);
+	float *out_buf = (float*) output_buffer;
+	if (mouse->is_playing()) {
+		double* audio_data = arrangeWindow->GetAudio(frames_per_buffer, output_channels);
+
+		for (int i=0; i<frames_per_buffer*output_channels; i++) {
+			out_buf[i] = audio_data[i];
+		}
+		delete[] audio_data;
+		arrangeWindow->AdvancePlaybackLocator(frames_per_buffer);
+	} else {
+		for (int i=0; i<frames_per_buffer*output_channels; i++) {
+			out_buf[i] = 0.0;
+		}
+	}
 //	for (int i=0; i<frames_per_buffer*output_channels; i++) {
 //		std::cout << "audio[" << i << "]: " << audio_data[i] << std::endl;
 //	}
@@ -238,15 +250,7 @@ static int PaCallback(const void *input_buffer, void *output_buffer,
 //	paData *data = (paData *) userData;
 
 //	double *in_buf = (double*) input_buffer;
-	float *out_buf = (float*) output_buffer;
-	for (int i=0; i<frames_per_buffer*output_channels; i++) {
-		out_buf[i] = audio_data[i];
-	}
 
-	if (mouse->is_playing()) {
-		arrangeWindow->AdvancePlaybackLocator(frames_per_buffer);
-	}
-	delete[] audio_data;
 	return paContinue;
 }
 

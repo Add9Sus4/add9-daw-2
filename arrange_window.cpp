@@ -16,6 +16,8 @@ ArrangeWindow::ArrangeWindow(double left, double top, double right, double botto
 	AddAudioTrack();
 	AddAudioTrack();
 	playback_locator_color_ = playback_locator_color_init_;
+	zoom_area_color_ = zoom_area_color_init_;
+	zoom_area_ = new Rect(left, bottom + ZOOM_AREA_HEIGHT, right, bottom);
 }
 
 ArrangeWindow::~ArrangeWindow() {
@@ -23,6 +25,16 @@ ArrangeWindow::~ArrangeWindow() {
 }
 
 Rect ArrangeWindow::Draw() {
+	// Draw zoom area
+	glColor3d(zoom_area_color_.r, zoom_area_color_.g, zoom_area_color_.b);
+	glBegin(GL_LINE_STRIP);
+	glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
+	glVertex2d(zoom_area_->right - ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
+	glVertex2d(zoom_area_->right - ZOOM_AREA_PADDING, zoom_area_->bottom + ZOOM_AREA_PADDING);
+	glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->bottom + ZOOM_AREA_PADDING);
+	glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
+	glEnd();
+
 	// Draw window area
 	glColor3d(color.r, color.g, color.b);
 	glBegin(GL_LINE_STRIP);
@@ -44,7 +56,7 @@ Rect ArrangeWindow::Draw() {
 	}
 	// Draw audio tracks
 	for (int i=0; i<audio_tracks_.size(); i++) {
-		audio_tracks_[i]->set_sample_width(width_of_sample_);
+		audio_tracks_[i]->set_sample_width(get_width_of_sample());
 		audio_tracks_[i]->set_bpm(bpm_);
 		audio_tracks_[i]->Draw();
 	}
@@ -52,14 +64,14 @@ Rect ArrangeWindow::Draw() {
 	if (mouse_) {
 		if (mouse_->file != NULL) {
 			std::cout << "mouse contains file: " << mouse_->file->get_name() << std::endl;
-			mouse_->file->DrawGhost(mouse_->x, mouse_->y, width_of_sample_, bpm_);
+			mouse_->file->DrawGhost(mouse_->x, mouse_->y, get_width_of_sample(), bpm_);
 		}
 	}
 	// Draw playback locator
 	glColor3d(playback_locator_color_.r,playback_locator_color_.g,playback_locator_color_.b);
 	glBegin(GL_LINE_STRIP);
-	glVertex2d(left_ + width_of_sample_ * playback_locator_, top_);
-	glVertex2d(left_ + width_of_sample_ * playback_locator_, bottom_);
+	glVertex2d(left_ + get_width_of_sample() * playback_locator_, top_);
+	glVertex2d(left_ + get_width_of_sample() * playback_locator_, bottom_);
 	glEnd();
 	return Rect(left_, top_, right_, bottom_);
 }
@@ -69,7 +81,7 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 //		mouse->file->DrawGhost(mouse->x, mouse->y);
 //	}
 	mouse_ = mouse;
-	if (!contains(mouse)) {
+	if (!contains(mouse) && !zoom_area_dragging_) {
 		ResetColor();
 		return false;
 	}
@@ -92,6 +104,9 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 			if (is_near_playback_locator(mouse)) {
 				playback_locator_selected_ = true;
 			}
+			if (is_in_zoom_area(mouse)) {
+				zoom_area_dragging_ = true;
+			}
 			break;
 		case DOUBLE_CLICK:
 			std::cout << "Arrange window received double click" << std::endl;
@@ -99,7 +114,15 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 		case DRAG:
 			std::cout << "Dragging in arrange window" << std::endl;
 			if (playback_locator_selected_) {
-				playback_locator_ = (mouse->x - left_) / width_of_sample_;
+				playback_locator_ = (mouse->x - left_) / get_width_of_sample();
+			}
+			if (zoom_area_dragging_) {
+				double drag_amt = mouse->y - mouse->ypress;
+				std::cout << "drag amt: " << drag_amt << std::endl;
+				zoom_drag_amt_ = drag_amt;
+				for (int i=0; i<audio_tracks_.size(); i++) {
+					audio_tracks_[i]->set_sample_width(get_width_of_sample());
+				}
 			}
 			break;
 		case HOVER:
@@ -109,11 +132,19 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 			} else {
 				playback_locator_color_ = playback_locator_color_init_;
 			}
+			if (is_in_zoom_area(mouse)) {
+				zoom_area_color_ = zoom_area_color_selected_;
+			} else {
+				zoom_area_color_ = zoom_area_color_init_;
+			}
 			break;
 		case RELEASE:
 			std::cout << "Arrange window received mouse release" << std::endl;
 			mouse->ClearFile();
 			playback_locator_selected_ = false;
+			zoom_area_dragging_ = false;
+			width_of_sample_ += width_of_sample_ * zoom_drag_amt_;
+			zoom_drag_amt_ = 0.0;
 			break;
 		default:
 			break;

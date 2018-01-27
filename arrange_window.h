@@ -18,6 +18,9 @@
 #include <string>
 #include <vector>
 
+#define ZOOM_AREA_HEIGHT	0.05
+#define ZOOM_AREA_PADDING	0.01
+
 #include "audio_track.h"
 #include "window.h"
 
@@ -29,15 +32,20 @@ public:
 	virtual ~ArrangeWindow();
 	Rect Draw() override;
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
-
+	inline bool is_in_zoom_area(Mouse* mouse) {
+		return mouse->x > zoom_area_->left && mouse->x < zoom_area_->right &&
+				mouse->y > zoom_area_->bottom && mouse->y < zoom_area_->top;
+	}
 	// Returns audio data from all samples that are in the arrange window
 	double* GetAudio(int frames_per_buffer, int channels);
-	inline double WidthOfMeasure() { return width_of_sample_ * 44100.0 * 60.0 * 4.0 / bpm_; }
+	inline double WidthOfMeasure() { return get_width_of_sample() * 44100.0 * 60.0 * 4.0 / bpm_; }
+	inline double get_width_of_sample() { return width_of_sample_ + width_of_sample_ * zoom_drag_amt_; }
 	void AddAudioTrack();
 	void AdvancePlaybackLocator(int frames_per_buffer);
 private:
 	bool playback_locator_selected_ = false;
-	double width_of_sample_ = 0.000001, bpm_ = 140.0;
+	bool zoom_area_dragging_ = false;
+	double width_of_sample_ = 0.000001, bpm_ = 140.0, zoom_drag_amt_ = 0.0;
 	int playback_locator_ = 1;
 	void Font(void *font, char *text, double x, double y);
 	std::vector<AudioTrack*> audio_tracks_;
@@ -45,6 +53,10 @@ private:
 	Color playback_locator_color_init_ = {0.15, 0.25, 0.1};
 	Color playback_locator_color_selected_ = {0.3, 0.5, 0.2};
 	Color playback_locator_color_;
+	Color zoom_area_color_init_ = {0.3, 0.3, 0.15};
+	Color zoom_area_color_selected_ = {0.6, 0.6, 0.3};
+	Color zoom_area_color_;
+	Rect* zoom_area_;
 	inline bool is_near_playback_locator(Mouse* mouse) {
 		return fabs(mouse->x - left_ - width_of_sample_ * (double) playback_locator_) <= 0.01;
 	}

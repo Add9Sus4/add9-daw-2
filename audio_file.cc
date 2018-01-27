@@ -288,7 +288,7 @@ Rect AudioFile::DrawBelow(Rect rect, double translate_amount) {
 
 void AudioFile::DrawInClip(double left, double top, double right, double bottom) {
 	double width_of_clip = right - left;
-	double width_per_frame = width_of_clip / get_num_frames();
+	double width_per_frame = width_of_clip / (double) get_num_frames();
 	double midpoint_y = bottom + (top - bottom)/2.0;
 	glColor3d(audio_file_clip_.r,audio_file_clip_.g,audio_file_clip_.b);
 	glBegin(GL_LINE_STRIP);

@@ -30,7 +30,13 @@ public:
 	Rect Draw() override;
 	inline std::vector<AudioClip*> get_audio_clips() { return audio_clips_; }
 	void AddAudioClip(double position, AudioFile* file);
-	inline void set_sample_width(double width_of_sample) { width_of_sample_ = width_of_sample; }
+	inline void set_sample_width(double width_of_sample) {
+		width_of_sample_ = width_of_sample;
+		for (int i=0; i<audio_clips_.size(); i++) {
+			std::cout << "setting sample width: " << width_of_sample << std::endl;
+			audio_clips_[i]->set_sample_width(width_of_sample);
+		}
+	}
 	inline void set_bpm(double bpm) { bpm_ = bpm; }
 private:
 	Color audio_track_init_ = {0.4, 0.35, 0.3};
