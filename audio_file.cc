@@ -7,8 +7,6 @@
 
 #include "audio_file.h"
 
-#include "main_window.h"
-
 namespace add9daw2 {
 
 bool AudioFile::FillBlockWithAudio(float* empty_block, int frames_per_buffer, int channels) {
@@ -148,16 +146,6 @@ bool AudioFile::FillBlockWithAudio(float* empty_block, int frames_per_buffer, in
 	}
 	return false;
 }
-bool AudioFile::OnClick(double x, double y) {
-	bool in_window = is_coordinate_in_window(x, y);
-	// Check all window areas for click
-	if (in_window) {
-		LoadAudio();
-		std::cout << file_name_ << " clicked!" << std::endl;
-		get_main_window()->set_playing_file(this);
-	}
-	return in_window;
-}
 
 double* AudioFile::GetAudioFromChannel(int channel)
 {
@@ -165,14 +153,53 @@ double* AudioFile::GetAudioFromChannel(int channel)
 }
 double* AudioFile::GetAudioFromChannel(int channel, int start_frame, int end_frame)
 {
+	std::cout << "getting audio starting from frame " << start_frame << " to " << end_frame << std::endl;
 	int length = end_frame - start_frame;
 	if (end_frame > audio_[LEFT].size()) {
 		std::cout << "End frame (" << end_frame << ") must not be greater than the number of audio frames (" << audio_[LEFT].size() << ")." << std::endl;
 		return nullptr;
 	}
+	// If the start frame is negative, fill all negative frames with zeros
 	if (start_frame < 0) {
-		std::cout << "Start frame (" << start_frame << ") must be 0 or greater." << std::endl;
-		return nullptr;
+		if (channel == LEFT) {
+			double* left = new double[length];
+			for (int i=start_frame; i<0; i++) {
+				left[i - start_frame] = 0.0;
+			}
+			 for (int i=0; i<end_frame; i++) {
+				 left[i - start_frame] = audio_[LEFT][i];
+			 }
+			 return left;
+		} else if (channel == RIGHT) {
+			if (is_mono()) {
+				std::cout << "Cannot access channel " << RIGHT << " for mono audio." << std::endl;
+				return nullptr;
+			}
+			double* right = new double[length];
+			for (int i=start_frame; i<0; i++) {
+				right[i - start_frame] = 0.0;
+			}
+			for (int i=0; i<end_frame; i++) {
+			 right[i - start_frame] = audio_[LEFT][i];
+			}
+			return right;
+		} else if (channel == LR_AVG) {
+			if (is_mono()) {
+				std::cout << "Cannot access channel " << RIGHT << " for mono audio." << std::endl;
+				return nullptr;
+			}
+			double *left_right_average = new double[length];
+			for (int i=start_frame; i<0; i++) {
+				left_right_average[i - start_frame] = 0.0;
+			}
+			for (int i=0; i<end_frame; i++) {
+				left_right_average[i - start_frame] = (audio_[LEFT][i] + audio_[RIGHT][i]) / 2.0;
+			}
+			return left_right_average;
+		} else {
+			std::cout << "Channel value of " << channel << " is not supported." << std::endl;
+			return nullptr;
+		}
 	}
 	if (length < 1) {
 		std::cout << "Length (" << length << ") must be at least 1." << std::endl;
@@ -212,20 +239,111 @@ double* AudioFile::GetAudioFromChannel(int channel, int start_frame, int end_fra
 	}
 }
 
-void AudioFile::Draw(double x_offset, double y_offset) {
-	if (get_left() + x_offset < get_parent_window()->get_parent_window()->get_left() ||
-		get_top() + y_offset > get_parent_window()->get_parent_window()->get_top() - 0.01 ||
-		get_right() + x_offset > get_parent_window()->get_parent_window()->get_right() ||
-		get_bottom() + y_offset < get_parent_window()->get_parent_window()->get_bottom()) {
+Rect AudioFile::Draw() {
+	return Rect(left_, top_, right_, bottom_);
+}
+
+void AudioFile::DrawGhost(double x, double y, double width_of_sample_, double bpm_) {
+	// If the audio has not been loaded, load it now
+	if (!loaded_) {
+		LoadAudio();
+	}
+	// If it's still not loaded, do not draw anything
+	if (!loaded_) {
+		return;
+	} else {
+		std::cout << "Drawing ghost for file: " << get_name() << std::endl;
+		glColor3d(audio_file_ghost_.r,audio_file_ghost_.g,audio_file_ghost_.b);
+		glBegin(GL_LINE_STRIP);
+		int inc = get_num_frames()/100;
+		for (int i=0; i<get_num_frames(); i+=inc) {
+			glVertex2d(x + (double)width_of_sample_*i, y + audio_[LEFT][i]/20);
+		}
+		glEnd();
+	}
+}
+
+Rect AudioFile::DrawBelow(Rect rect, double translate_amount) {
+	translate_amount_ = translate_amount;
+	top_ = rect.bottom;
+	bottom_ = rect.bottom - FILE_HEIGHT;
+	// Hide if the file is below the bottom of the arrange window
+	if (bottom_ + translate_amount < get_parent()->get_parent()->get_bottom() ||
+			top_ + translate_amount > get_parent()->get_bottom()) {
 		set_hidden(true);
 	} else {
 		set_hidden(false);
 	}
-	if (is_hidden()) { return; }
-	// Draw the folder name
-//	string abbrevPath = fileName_.substr(fileName_.find("/"));
-	glColor3d(0.6, 0.74, 0.80);
-	Font(GLUT_BITMAP_HELVETICA_10, (char*) file_name_.c_str(), NormalizeCoord(get_left() + 0.01 + x_offset), NormalizeCoord(get_top() - 0.01 + y_offset));
+	// If the file is hidden, return the rect but don't draw the file.
+	if (hidden_) {
+		return Rect(left_, top_, right_, bottom_);
+	}
+	glColor3d(color.r, color.g, color.b);
+	// Draw the rectangle around the folder
+	// Draw the file name
+	Font(GLUT_BITMAP_HELVETICA_10, (char*) name_.c_str(), left_ + 0.035, top_ - 0.035 + translate_amount);
+	// Return the bottom of the folder if closed; otherwise, return the bottom of the last file in the list.
+	return Rect(left_, top_, right_, bottom_);
+}
+
+void AudioFile::DrawInClip(double left, double top, double right, double bottom) {
+	double width_of_clip = right - left;
+	double width_per_frame = width_of_clip / get_num_frames();
+	double midpoint_y = bottom + (top - bottom)/2.0;
+	glColor3d(audio_file_clip_.r,audio_file_clip_.g,audio_file_clip_.b);
+	glBegin(GL_LINE_STRIP);
+	int inc = get_num_frames()/100;
+	for (int i=0; i<get_num_frames(); i+=inc) {
+		glVertex2d(left + (double)width_per_frame*i, midpoint_y + audio_[LEFT][i]/20);
+	}
+	glEnd();
+}
+
+bool AudioFile::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
+	// Mouse cannot interact with hidden audio files
+	if (hidden_) {
+		return false;
+	}
+	if (!contains(mouse)) {
+		ResetColor();
+		return false;
+	}
+	color = selected;
+	switch (mouseEventType) {
+		case CLICK:
+			std::cout << "File " << name_ << " received click" << std::endl;
+			break;
+		case DOUBLE_CLICK:
+			std::cout << "File " << name_ << " received double click" << std::endl;
+			break;
+		case DRAG:
+			if (mouse->file == 0) {
+				mouse->file = this;
+			}
+			std::cout << "Dragging in file " << name_ << std::endl;
+			break;
+		case HOVER:
+			std::cout << "Hovering in file " << name_ << std::endl;
+			break;
+		case RELEASE:
+			std::cout << "File " << name_ << " received mouse release" << std::endl;
+			mouse->ClearFile();
+			break;
+		default:
+			break;
+	}
+	return true;
+}
+void AudioFile::Font(void *font, char *text, double x, double y) {
+	glDisable(GL_LIGHTING);
+	char buf[20];
+	snprintf(buf, 20, "%s", text);
+	glRasterPos2d(x, y);
+	while ( *text != '\0') {
+		glutBitmapCharacter(font, *text);
+		++text;
+	}
+	glEnable(GL_LIGHTING);
 }
 void AudioFile::InvertPhase()
 {
@@ -240,13 +358,15 @@ void AudioFile::InvertPhase()
 	}
 }
 void AudioFile::LoadAudio() {
+	std::cout << "Loading audio..." << std::endl;
+	std::string full_name = dir_ + "/" + name_;
 	SF_INFO file_info;
-	SNDFILE* file = sf_open(file_name_.c_str(), SFM_READ, &file_info);
+	SNDFILE* file = sf_open(full_name.c_str(), SFM_READ, &file_info);
 
 	if (file == 0) {
-		std::cout << "Error: could not open file: " << file_name_ << std::endl;
+		std::cout << "Error: could not open file: " << name_ << std::endl;
 		puts(sf_strerror(0));
-		file_name_ = "Error";
+		name_ = "Error";
 	} else {
 		num_channels_ = file_info.channels;
 		num_frames_ = file_info.frames;
@@ -274,10 +394,11 @@ void AudioFile::LoadAudio() {
 		} else {
 			std::cout << "Error: invalid number of channels (" << num_channels_ << ").\n"
 					"Only files with 1 (mono) or 2 (stereo) channels of audio are supported." << std::endl;
-			file_name_ = "Error";
+			name_ = "Error";
 		}
 	}
 	sf_close(file);
+	loaded_ = true;
 }
 void AudioFile::Normalize()
 {

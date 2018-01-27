@@ -1,59 +1,51 @@
 /*
- * Folder.h
+ * folder.h
  *
- *  Created on: Jan 18, 2018
+ *  Created on: Jan 25, 2018
  *      Author: aarondawson
  */
 
-#ifndef ADD9DAW2_SRC_FOLDER_H_
-#define ADD9DAW2_SRC_FOLDER_H_
+#ifndef FOLDER_H_
+#define FOLDER_H_
 
-#define FILE_NAME_HEIGHT	0.02
+#define FOLDER_PADDING	0.005
+#define FOLDER_HEIGHT	0.05
 
 #include <dirent.h>
-#include <GLUT/glut.h>
+#include "glut/GLUT.h"
+#include <math.h>
+#include <unistd.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include "audio_file.h"
+#include "window.h"
 
 namespace add9daw2 {
 
-class WindowArea;
-
-// Represents a folder in the filesystem.
-// Used to access audio files that are in a particular folder.
-class Folder : public WindowArea {
+class Folder : public Window {
 public:
-	Folder(std::string path, double l, double t, double r, double b, MainWindow* main_window);
-	virtual ~Folder() {}
+	Folder(double left, double top, double right, double bottom, Window* parent);
+	virtual ~Folder();
 
-	// Handles drawing of the folder, its icon, and the files it contains
-	void Draw(double x_offset, double y_offset) override;
-
-	// Opens the folder when it is closed, and vice versa.
-	inline void ToggleOpen() {
-		open_ = !open_;
-		for (int i=0; i<get_num_child_windows(); i++) {
-			get_child_window(i)->set_hidden(!open_);
-		}
-	}
-
-	// Handles what happens when the folder is clicked.
-	bool OnClick(double x, double y) override;
-
-	// Returns the maximum y-coordinate of this folder, as well as all the files it contains.
-	double get_max_y() override;
-
-	// Returns the minimum y-coordinate of this folder, as well as all the files it contains.
-	double get_min_y() override;
-
+	inline bool is_open() { return open_; }
+	void LoadFileNames(std::string path);
+	Rect Draw() override;
+	// Draws this folder immediately below the given rect
+	Rect DrawBelow(Rect rect, double translate_amount);
+	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
+	void Font(void *font, char *text, double x, double y);
+	inline std::vector<AudioFile*> get_files() { return files_; }
 private:
 	bool open_;
-
-	double lowest_file_y_;
-
+	std::vector<std::string> file_names_;
+	std::vector<AudioFile*> files_;
 	std::string path_;
+	Window* parent_;
 };
 
-} // namespace add9daw2
+} /* namespace add9daw2 */
 
-#endif /* ADD9DAW2_SRC_FOLDER_H_ */
+#endif /* FOLDER_H_ */

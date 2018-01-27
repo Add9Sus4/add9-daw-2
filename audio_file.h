@@ -14,6 +14,8 @@
 #define RIGHT					1
 #define LR_AVG					2
 #define ZERO_REMOVAL_THRESHOLD	0.00001
+#define FILE_HEIGHT				0.03
+#define FILE_PADDING			0
 
 #include <dirent.h>
 #include <GLUT/glut.h>
@@ -21,10 +23,11 @@
 #include <sndfile.h>
 #include <unistd.h>
 
+#include <iostream>
 #include <string>
 #include <vector>
 
-#include "window_area.h"
+#include "window.h"
 
 namespace add9daw2 {
 
@@ -36,15 +39,19 @@ inline int CalculateNextPowerOfTwo(int number) {
 		return x;
 	}
 
-class MainWindow;
-
 // Loads, stores, and manipulates digital audio.
 // Use this class to get and use audio data from a file.
-class AudioFile : public WindowArea {
+class AudioFile : public Window {
 public:
-	AudioFile(std::string file_name, double l, double t, double r, double b, MainWindow* main_window) :
-		WindowArea(l, t, r, b, main_window), current_position_(0), num_channels_(MONO),
-		 num_frames_(0), sample_rate_(44100), file_name_(file_name) {}
+	AudioFile(std::string file_name, std::string dir, double left, double top, double right, double bottom, Window* parent) :
+			Window(left, top, right, bottom, parent),
+			loaded_(false),
+			current_position_(0.0),
+			num_channels_(MONO),
+			num_frames_(0),
+			sample_rate_(44100),
+			name_(file_name),
+			dir_(dir) {}
 	virtual ~AudioFile() {}
 
 	// Fills a block with audio data.
@@ -55,9 +62,6 @@ public:
 
 	// Returns true if the file has exactly two channels.
 	inline bool is_stereo() { return num_channels_ == STEREO; }
-
-	// Handles what happens when the audio file is clicked.
-	bool OnClick(double x, double y) override;
 
 	// Returns the entire amount of audio from the specified channel.
 	double* GetAudioFromChannel(int channel);
@@ -75,10 +79,21 @@ public:
 	inline int get_sample_rate() { return sample_rate_; }
 
 	// Returns the file name of the audio file.
-	inline std::string get_file_name() { return file_name_; }
+	inline std::string get_name() { return name_; }
 
-	// Draws the file name on the screen.
-	void Draw(double x_offset, double y_offset) override;
+	Rect Draw() override;
+
+	// Used to draw the audio file when it is being dragged
+	void DrawGhost(double x, double y, double width_of_sample, double bpm);
+
+	Rect DrawBelow(Rect rect, double translate_amount);
+
+	// Used to draw the audio file in a clip in the arrange window
+	void DrawInClip(double left, double top, double right, double bottom);
+
+	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
+
+	void Font(void *font, char *text, double x, double y);
 
 	// Flips the phase of the audio.
 	void InvertPhase();
@@ -114,10 +129,17 @@ public:
 	void TrimFromEnd(int num_samples);
 
 private:
+	bool loaded_;
+
 	int current_position_, num_channels_, num_frames_, sample_rate_;
 
 	std::vector<std::vector<double> > audio_;
-	std::string file_name_;
+	std::string name_;
+	std::string dir_;
+
+	Color audio_file_ghost_ = {0.3, 0.2, 0.25};
+	Color audio_file_clip_ = {0.6, 0.4, 0.5};
+
 };
 
 } // namespace add9daw2
