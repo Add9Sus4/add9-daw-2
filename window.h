@@ -8,6 +8,8 @@
 #ifndef WINDOW_H_
 #define WINDOW_H_
 
+#include <iostream>
+
 #include "color.h"
 #include "mouse.h"
 
@@ -38,12 +40,12 @@ public:
 	Window(double left, double top, double right, double bottom, Window* parent) :
 		hidden_(false), left_(left), top_(top), right_(right), bottom_(bottom),
 		translate_amount_(0.0), parent_(parent) {
-		color = init;
+		color_ = color_init_;
 	}
 	virtual ~Window();
 
 	// Returns true if the mouse is within this window
-	inline bool contains(Mouse* mouse) {
+	virtual inline bool contains(Mouse* mouse) {
 		return mouse->x >= left_ && mouse->x <= right_ && mouse->y - translate_amount_ <= top_ && mouse->y - translate_amount_ >= bottom_;
 	}
 	inline void set_bottom(double bottom) { bottom_ = bottom; }
@@ -58,10 +60,12 @@ public:
 	}
 	inline void set_hidden(bool hidden) { hidden_ = hidden; }
 
+
+
 	// Draws the window; returns a Rect defining the bounds of the window.
 	virtual Rect Draw() = 0;
 	virtual bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) = 0;
-	inline void ResetColor() { color = init; }
+	inline void ResetColor() { color_ = color_init_; }
 	inline virtual void ResetScrollbar() {}
 	inline virtual void ResetAll() {}
 	inline void set_translate_amount(double translate_amount) { translate_amount_ = translate_amount; }
@@ -70,6 +74,7 @@ public:
 	inline double get_top() { return top_; }
 	inline double get_left() { return left_; }
 	inline double get_right() { return right_; }
+
 	inline double height() { return top_ - bottom_; }
 	inline double width() { return right_ - left_; }
 	virtual double get_overflow_y() { return 0; }
@@ -78,9 +83,9 @@ public:
 protected:
 	bool hidden_;
 	double left_, top_, right_, bottom_, translate_amount_;
-	Color color;
-	Color selected = {0.6, 0.7, 0.8};
-	Color init = {0.3, 0.35, 0.4};
+	Color color_;
+	Color color_selected_ = {0.6, 0.7, 0.8};
+	Color color_init_ = {0.3, 0.35, 0.4};
 	Window* parent_;
 };
 

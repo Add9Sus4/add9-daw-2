@@ -46,7 +46,7 @@ void Folder::LoadFileNames(std::string path) {
 }
 
 Rect Folder::Draw() {
-	glColor3d(color.r, color.g, color.b);
+	glColor3d(color_.r, color_.g, color_.b);
 	// Draw the rectangle around the folder
 	glBegin(GL_LINE_STRIP);
 	glVertex2d(left_ + FOLDER_PADDING, top_ - FOLDER_PADDING);
@@ -88,7 +88,7 @@ Rect Folder::DrawBelow(Rect rect, double translate_amount) {
 	if (hidden_) {
 		return Rect(left_, top_, right_, bottom_);
 	}
-	glColor3d(color.r, color.g, color.b);
+	glColor3d(color_.r, color_.g, color_.b);
 	// Draw the rectangle around the folder
 	glBegin(GL_LINE_STRIP);
 	glVertex2d(left_ + FOLDER_PADDING, top_ - FOLDER_PADDING + folder_translate_amount);
@@ -144,7 +144,7 @@ bool Folder::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 		}
 	}
 	// If the folder is open
-	color = selected;
+	color_ = color_selected_;
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "Folder " << path_ << " received click" << std::endl;

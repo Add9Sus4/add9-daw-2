@@ -33,7 +33,7 @@ FilesWindow::~FilesWindow() {
 
 Rect FilesWindow::Draw() {
 	// Draw the files window area
-	glColor3d(color.r, color.g, color.b);
+	glColor3d(color_.r, color_.g, color_.b);
 	glBegin(GL_LINE_STRIP);
 	glVertex2d(left_, top_);
 	glVertex2d(right_, top_);
@@ -90,7 +90,7 @@ bool FilesWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType)
 		ResetColor();
 		return false;
 	}
-	color = selected;
+	color_ = color_selected_;
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "Files window received click" << std::endl;

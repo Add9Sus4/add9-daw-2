@@ -30,6 +30,9 @@ class ArrangeWindow : public Window {
 public:
 	ArrangeWindow(double left, double top, double right, double bottom, Window* parent);
 	virtual ~ArrangeWindow();
+	inline bool contains(Mouse* mouse) override {
+			return mouse->x >= left_ && mouse->x <= right_ && mouse->y - translate_amount_ <= top_ && mouse->y - translate_amount_ >= bottom_;
+	}
 	Rect Draw() override;
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
 	inline bool is_in_zoom_area(Mouse* mouse) {
@@ -39,13 +42,17 @@ public:
 	// Returns audio data from all samples that are in the arrange window
 	double* GetAudio(int frames_per_buffer, int channels);
 	inline double WidthOfMeasure() { return get_width_of_sample() * 44100.0 * 60.0 * 4.0 / bpm_; }
-	inline double get_width_of_sample() { return width_of_sample_ + width_of_sample_ * zoom_drag_amt_; }
+	inline double get_width_of_sample() { return width_of_sample_ + width_of_sample_ * zoom_drag_z_amt_; }
 	void AddAudioTrack();
 	void AdvancePlaybackLocator(int frames_per_buffer);
+	inline void set_x_offset(double x_offset) { x_offset_ = x_offset; }
+	inline double get_x_offset() {
+		return x_offset_ + zoom_drag_x_amt_; }
+	inline void set_zoom_drag_x_amt(double zoom) { zoom_drag_x_amt_ = zoom; }
 private:
 	bool playback_locator_selected_ = false;
 	bool zoom_area_dragging_ = false;
-	double width_of_sample_ = 0.000001, bpm_ = 140.0, zoom_drag_amt_ = 0.0;
+	double width_of_sample_ = 0.000001, bpm_ = 140.0, zoom_drag_z_amt_ = 0.0;
 	int playback_locator_ = 1;
 	void Font(void *font, char *text, double x, double y);
 	std::vector<AudioTrack*> audio_tracks_;
@@ -57,8 +64,10 @@ private:
 	Color zoom_area_color_selected_ = {0.6, 0.6, 0.3};
 	Color zoom_area_color_;
 	Rect* zoom_area_;
+	double x_offset_ = 0.0;
+	double zoom_drag_x_amt_ = 0.0;
 	inline bool is_near_playback_locator(Mouse* mouse) {
-		return fabs(mouse->x - left_ - width_of_sample_ * (double) playback_locator_) <= 0.01;
+		return fabs(mouse->x - left_ - width_of_sample_ * (double) playback_locator_ + x_offset_) <= 0.01;
 	}
 };
 

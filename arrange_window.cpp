@@ -36,7 +36,7 @@ Rect ArrangeWindow::Draw() {
 	glEnd();
 
 	// Draw window area
-	glColor3d(color.r, color.g, color.b);
+	glColor3d(color_.r, color_.g, color_.b);
 	glBegin(GL_LINE_STRIP);
 	glVertex2d(left_, top_);
 	glVertex2d(right_, top_);
@@ -46,17 +46,20 @@ Rect ArrangeWindow::Draw() {
 	glEnd();
 	// Draw measure markers
 	int measure_number = 1;
-	for (double i=left_; i<right_; i+=WidthOfMeasure()) {
-		glBegin(GL_LINE_STRIP);
-		glVertex2d(i, top_);
-		glVertex2d(i, top_ - 0.01);
-		glEnd();
-		Font(GLUT_BITMAP_HELVETICA_10, (char *) std::to_string(measure_number).c_str(), i, top_ + 0.01);
+	for (double i=left_ - get_x_offset(); i<right_; i+=WidthOfMeasure()) {
+		if (i > left_) {
+			glBegin(GL_LINE_STRIP);
+			glVertex2d(i, top_);
+			glVertex2d(i, top_ - 0.01);
+			glEnd();
+			Font(GLUT_BITMAP_HELVETICA_10, (char *) std::to_string(measure_number).c_str(), i, top_ + 0.01);
+		}
 		measure_number++;
 	}
 	// Draw audio tracks
 	for (int i=0; i<audio_tracks_.size(); i++) {
 		audio_tracks_[i]->set_sample_width(get_width_of_sample());
+		audio_tracks_[i]->set_x_offset(get_x_offset());
 		audio_tracks_[i]->set_bpm(bpm_);
 		audio_tracks_[i]->Draw();
 	}
@@ -68,11 +71,13 @@ Rect ArrangeWindow::Draw() {
 		}
 	}
 	// Draw playback locator
-	glColor3d(playback_locator_color_.r,playback_locator_color_.g,playback_locator_color_.b);
-	glBegin(GL_LINE_STRIP);
-	glVertex2d(left_ + get_width_of_sample() * playback_locator_, top_);
-	glVertex2d(left_ + get_width_of_sample() * playback_locator_, bottom_);
-	glEnd();
+	if (get_width_of_sample() * playback_locator_ > get_x_offset() && get_width_of_sample() * playback_locator_ + left_ - get_x_offset() < right_) {
+		glColor3d(playback_locator_color_.r,playback_locator_color_.g,playback_locator_color_.b);
+		glBegin(GL_LINE_STRIP);
+		glVertex2d(left_ - get_x_offset() + get_width_of_sample() * playback_locator_, top_);
+		glVertex2d(left_ - get_x_offset() + get_width_of_sample() * playback_locator_, bottom_);
+		glEnd();
+	}
 	return Rect(left_, top_, right_, bottom_);
 }
 
@@ -97,7 +102,7 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 		ResetColor();
 		return false;
 	}
-	color = selected;
+	color_ = color_selected_;
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "Arrange window received click" << std::endl;
@@ -114,12 +119,20 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 		case DRAG:
 			std::cout << "Dragging in arrange window" << std::endl;
 			if (playback_locator_selected_) {
-				playback_locator_ = (mouse->x - left_) / get_width_of_sample();
+				playback_locator_ = (mouse->x + get_x_offset() - left_) / get_width_of_sample();
 			}
 			if (zoom_area_dragging_) {
-				double drag_amt = mouse->y - mouse->ypress;
-				std::cout << "drag amt: " << drag_amt << std::endl;
-				zoom_drag_amt_ = drag_amt;
+				double drag_z_amt = mouse->y - mouse->ypress;
+				double drag_x_amt = mouse->x - mouse->xpress;
+				std::cout << "drag amt: " << drag_x_amt << std::endl;
+				zoom_drag_z_amt_ = drag_z_amt;
+				if (x_offset_ + drag_x_amt < 0.0) {
+
+					zoom_drag_x_amt_ = -x_offset_;
+				} else {
+
+					set_zoom_drag_x_amt(drag_x_amt);
+				}
 				for (int i=0; i<audio_tracks_.size(); i++) {
 					audio_tracks_[i]->set_sample_width(get_width_of_sample());
 				}
@@ -143,8 +156,10 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 			mouse->ClearFile();
 			playback_locator_selected_ = false;
 			zoom_area_dragging_ = false;
-			width_of_sample_ += width_of_sample_ * zoom_drag_amt_;
-			zoom_drag_amt_ = 0.0;
+			width_of_sample_ += width_of_sample_ * zoom_drag_z_amt_;
+			zoom_drag_z_amt_ = 0.0;
+			x_offset_ += zoom_drag_x_amt_;
+			zoom_drag_x_amt_ = 0.0;
 			break;
 		default:
 			break;

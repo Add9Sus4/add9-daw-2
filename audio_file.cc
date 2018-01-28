@@ -278,7 +278,7 @@ Rect AudioFile::DrawBelow(Rect rect, double translate_amount) {
 	if (hidden_) {
 		return Rect(left_, top_, right_, bottom_);
 	}
-	glColor3d(color.r, color.g, color.b);
+	glColor3d(color_.r, color_.g, color_.b);
 	// Draw the rectangle around the folder
 	// Draw the file name
 	Font(GLUT_BITMAP_HELVETICA_10, (char*) name_.c_str(), left_ + 0.035, top_ - 0.035 + translate_amount);
@@ -290,11 +290,12 @@ void AudioFile::DrawInClip(double left, double top, double right, double bottom)
 	double width_of_clip = right - left;
 	double width_per_frame = width_of_clip / (double) get_num_frames();
 	double midpoint_y = bottom + (top - bottom)/2.0;
+	double normalize_factor = (top - midpoint_y);
 	glColor3d(audio_file_clip_.r,audio_file_clip_.g,audio_file_clip_.b);
 	glBegin(GL_LINE_STRIP);
 	int inc = get_num_frames()/100;
 	for (int i=0; i<get_num_frames(); i+=inc) {
-		glVertex2d(left + (double)width_per_frame*i, midpoint_y + audio_[LEFT][i]/20);
+		glVertex2d(left + (double)width_per_frame*i, midpoint_y + audio_[LEFT][i]*normalize_factor);
 	}
 	glEnd();
 }
@@ -308,7 +309,7 @@ bool AudioFile::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 		ResetColor();
 		return false;
 	}
-	color = selected;
+	color_ = color_selected_;
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "File " << name_ << " received click" << std::endl;

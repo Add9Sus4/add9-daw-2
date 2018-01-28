@@ -29,7 +29,7 @@ Rect VerticalScrollbar::Draw() {
 
 	// Draw the drag area
 	// Calculate drag area height
-	glColor3d(color.r, color.g, color.b);
+	glColor3d(color_.r, color_.g, color_.b);
 	glBegin(GL_LINE_STRIP);
 	glVertex2d(drag_area_->left + VERTICAL_SCROLLBAR_PADDING, last_position_ - offset_y_ - VERTICAL_SCROLLBAR_PADDING);
 	glVertex2d(drag_area_->right - VERTICAL_SCROLLBAR_PADDING, last_position_ - offset_y_ - VERTICAL_SCROLLBAR_PADDING);
@@ -49,7 +49,7 @@ bool VerticalScrollbar::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEven
 		ResetColor();
 		return false;
 	}
-	color = selected;
+	color_ = color_selected_;
 	double potential_offset;
 	switch (mouseEventType) {
 		case CLICK:

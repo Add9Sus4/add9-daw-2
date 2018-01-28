@@ -16,18 +16,24 @@ AudioClip::~AudioClip() {
 bool AudioClip::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 
 	if (!contains(mouse)) {
+		color_ = color_init_;
 		return false;
 	}
-	color = selected;
+	color_ = color_selected_;
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "Audio clip received click" << std::endl;
+			set_dragging(true);
 			break;
 		case DOUBLE_CLICK:
 			std::cout << "Audio clip received double click" << std::endl;
 			break;
 		case DRAG:
-			std::cout << "Dragging in audio clip" << std::endl;
+			if (is_being_dragged()) {
+				std::cout << "Dragging in audio clip" << std::endl;
+				drag_amt_ = mouse->x - mouse->xpress;
+				std::cout << "Drag amt: " << drag_amt_ << std::endl;
+			}
 			break;
 		case HOVER:
 			std::cout << "Hovering in audio clip" << std::endl;
@@ -35,6 +41,10 @@ bool AudioClip::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 		case RELEASE:
 			std::cout << "Audio clip received mouse release" << std::endl;
 			mouse->ClearFile();
+			set_dragging(false);
+			set_end_in_samples(get_end_in_samples() + drag_amt_ / width_of_sample_);
+			set_start_in_samples(get_start_in_samples() + drag_amt_ / width_of_sample_);
+			drag_amt_ = 0;
 			break;
 		default:
 			break;
@@ -46,14 +56,20 @@ Rect AudioClip::Draw() {
 	// Set bounds on clip
 	left_ = get_parent()->get_left() + (double) start_in_samples_ * width_of_sample_;
 	right_ = get_parent()->get_left() + (double) end_in_samples_ * width_of_sample_;
-	// Draw clip start
-	glColor3d(color.r, color.g, color.b);
+	if (left_ - x_offset_ < get_parent()->get_left() || right_ - x_offset_ > get_parent()->get_right()) {
+		return Rect(left_, top_, right_, bottom_);
+	}
+	// Draw clip rectangle
+	glColor3d(color_.r, color_.g, color_.b);
 	glBegin(GL_LINE_STRIP);
-	glVertex2d(left_, top_);
-	glVertex2d(left_, bottom_);
+	glVertex2d(left_ - x_offset_ + drag_amt_, top_ - AUDIO_TRACK_PADDING);
+	glVertex2d(right_ - x_offset_ + drag_amt_, top_ - AUDIO_TRACK_PADDING);
+	glVertex2d(right_ - x_offset_ + drag_amt_, bottom_ + AUDIO_TRACK_PADDING);
+	glVertex2d(left_ - x_offset_ + drag_amt_, bottom_ + AUDIO_TRACK_PADDING);
+	glVertex2d(left_ - x_offset_ + drag_amt_, top_ - AUDIO_TRACK_PADDING);
 	glEnd();
 	// Draw audio
-	file_->DrawInClip(left_, top_, right_, bottom_);
+	file_->DrawInClip(left_ - x_offset_ + drag_amt_, top_ - AUDIO_TRACK_PADDING, right_ - x_offset_ + drag_amt_, bottom_ + AUDIO_TRACK_PADDING);
 	//TODO: Draw all audio clips
 	return Rect(left_, top_, right_, bottom_);
 }

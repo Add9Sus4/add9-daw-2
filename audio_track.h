@@ -9,7 +9,6 @@
 #define AUDIO_TRACK_H_
 
 #define AUDIO_TRACK_HEIGHT	0.1
-#define AUDIO_TRACK_PADDING	0.01
 
 #include <glut/GLUT.h>
 
@@ -33,16 +32,17 @@ public:
 	inline void set_sample_width(double width_of_sample) {
 		width_of_sample_ = width_of_sample;
 		for (int i=0; i<audio_clips_.size(); i++) {
-			std::cout << "setting sample width: " << width_of_sample << std::endl;
 			audio_clips_[i]->set_sample_width(width_of_sample);
 		}
 	}
 	inline void set_bpm(double bpm) { bpm_ = bpm; }
+	inline void set_x_offset(double x_offset) { x_offset_ = x_offset; }
 private:
 	Color audio_track_init_ = {0.4, 0.35, 0.3};
 	Color audio_track_selected_ = {0.8, 0.7, 0.6};
 	std::vector<AudioClip*> audio_clips_;
 	double width_of_sample_, bpm_;
+	double x_offset_ = 0.0;
 };
 
 } /* namespace add9daw2 */
