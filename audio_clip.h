@@ -33,6 +33,9 @@ public:
 	virtual ~AudioClip();
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
 	inline bool is_being_dragged() { return dragging_; }
+	inline bool contains(Mouse* mouse) override {
+		return mouse->x >= left_ - get_x_offset() && mouse->x <= right_ - get_x_offset() && mouse->y - translate_amount_ <= top_ && mouse->y - translate_amount_ >= bottom_;
+	}
 	Rect Draw() override;
 	inline void set_sample_width(double width_of_sample) { width_of_sample_ = width_of_sample; }
 	inline void set_bpm(double bpm) { bpm_ = bpm; }
@@ -45,6 +48,7 @@ public:
 	inline int get_start_in_samples() { return start_in_samples_; }
 	inline int get_end_in_samples() { return end_in_samples_; }
 	inline double get_drag_amt() { return drag_amt_; }
+	inline double get_x_offset() { return x_offset_ + drag_amt_; }
 	inline std::string get_file_name() { return file_->get_name(); }
 private:
 	bool dragging_ = false;
