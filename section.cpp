@@ -50,4 +50,57 @@ void Section::set_default_values(SectionType section_type) {
 	}
 }
 
+Rect Section::Draw() {
+	set_color();
+	glBegin(GL_LINE_STRIP);
+	glVertex2d(left_ + SECTION_PADDING, top_);
+	glVertex2d(right_ - SECTION_PADDING, top_);
+	glVertex2d(right_ - SECTION_PADDING, bottom_);
+	glVertex2d(left_ + SECTION_PADDING, bottom_);
+	glVertex2d(left_ + SECTION_PADDING, top_);
+	glEnd();
+	Font(GLUT_BITMAP_HELVETICA_10, (char *) get_name().c_str(), left_ + 0.01, bottom_ + 0.02);
+	return Rect(left_, top_, right_, bottom_);
+}
+
+bool Section::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
+	if (!contains(mouse)) {
+		color_factor_ = color_factor_init_;
+		return false;
+	}
+	color_factor_ = color_factor_selected_;
+	switch (mouseEventType) {
+		case CLICK:
+			std::cout << "Arrange window received click" << std::endl;
+			break;
+		case DOUBLE_CLICK:
+			std::cout << "Arrange window received double click" << std::endl;
+			break;
+		case DRAG:
+			std::cout << "Dragging in arrange window" << std::endl;
+			break;
+		case HOVER:
+			std::cout << "Hovering in arrange window" << std::endl;
+			break;
+		case RELEASE:
+			std::cout << "Arrange window received mouse release" << std::endl;
+			break;
+		default:
+			break;
+	}
+	return true;
+}
+
+void Section::Font(void *font, char *text, double x, double y) {
+	glDisable(GL_LIGHTING);
+	char buf[20];
+	snprintf(buf, 20, "%s", text);
+	glRasterPos2d(x, y);
+	while ( *text != '\0') {
+		glutBitmapCharacter(font, *text);
+		++text;
+	}
+	glEnable(GL_LIGHTING);
+}
+
 } /* namespace add9daw2 */

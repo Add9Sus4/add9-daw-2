@@ -22,17 +22,17 @@ ArrangeWindow::ArrangeWindow(double left, double top, double right, double botto
 	// Create zoom area
 	zoom_area_ = new Rect(left, bottom + ZOOM_AREA_HEIGHT, right, bottom);
 	// Add initial sections
-	AddSection(new Section(INTRO, 1, 5));
-	AddSection(new Section(VERSE, 5, 21));
-	AddSection(new Section(BREAK, 21, 29));
-	AddSection(new Section(BUILD, 29, 37));
-	AddSection(new Section(DROP, 37, 53));
-	AddSection(new Section(BREAK, 53, 57));
-	AddSection(new Section(VERSE, 57, 73));
-	AddSection(new Section(BREAK, 73, 81));
-	AddSection(new Section(BUILD, 81, 89));
-	AddSection(new Section(DROP, 89, 105));
-	AddSection(new Section(OUTRO, 105, 113));
+	AddSection(new Section(INTRO, 1, 5, this));
+	AddSection(new Section(VERSE, 5, 21, this));
+	AddSection(new Section(BREAK, 21, 29, this));
+	AddSection(new Section(BUILD, 29, 37, this));
+	AddSection(new Section(DROP, 37, 53, this));
+	AddSection(new Section(BREAK, 53, 57, this));
+	AddSection(new Section(VERSE, 57, 73, this));
+	AddSection(new Section(BREAK, 73, 81, this));
+	AddSection(new Section(BUILD, 81, 89, this));
+	AddSection(new Section(DROP, 89, 105, this));
+	AddSection(new Section(OUTRO, 105, 113, this));
 }
 
 ArrangeWindow::~ArrangeWindow() {
@@ -74,15 +74,11 @@ Rect ArrangeWindow::Draw() {
 	// Draw track sections
 	for (int i=0; i<sections_.size(); i++) {
 		Section* section = sections_[i];
-		section->set_color();
-		glBegin(GL_LINE_STRIP);
-		glVertex2d(left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure(), top_ + 0.1);
-		glVertex2d(left_ - get_x_offset() + section->get_end_measure() * WidthOfMeasure(), top_ + 0.1);
-		glVertex2d(left_ - get_x_offset() + section->get_end_measure() * WidthOfMeasure(), top_ + 0.05);
-		glVertex2d(left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure(), top_ + 0.05);
-		glVertex2d(left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure(), top_ + 0.1);
-		glEnd();
-		Font(GLUT_BITMAP_HELVETICA_10, (char *) section->get_name().c_str(), left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure() + 0.01, top_ + 0.07);
+		section->SetBounds(left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure(),
+				top_ + 0.1,
+				left_ - get_x_offset() + section->get_end_measure() * WidthOfMeasure(),
+				top_ + 0.05);
+		section->Draw();
 	}
 	// Draw audio tracks
 	for (int i=0; i<audio_tracks_.size(); i++) {
@@ -110,10 +106,21 @@ Rect ArrangeWindow::Draw() {
 }
 
 bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
-//	if (mouse->file != NULL) {
-//		mouse->file->DrawGhost(mouse->x, mouse->y);
-//	}
 	mouse_ = mouse;
+	// Check if mouse is in section area
+	bool mouse_in_section_area = false;
+	for (int i=0; i<sections_.size(); i++) {
+		if (sections_[i]->contains(mouse)) {
+			mouse_in_section_area = true;
+			sections_[i]->ReceiveMouseEvent(mouse, mouseEventType);
+		} else {
+			sections_[i]->set_not_selected();
+		}
+	}
+	if (mouse_in_section_area) {
+		ResetColor();
+		return false;
+	}
 	if (!contains(mouse) && !zoom_area_dragging_) {
 		ResetColor();
 		return false;

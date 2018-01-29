@@ -1,5 +1,9 @@
-section.o: ../section.cpp ../section.h ../Color.h
+section.o: ../section.cpp ../section.h ../color.h ../window.h ../mouse.h
 
 ../section.h:
 
-../Color.h:
+../color.h:
+
+../window.h:
+
+../mouse.h:
