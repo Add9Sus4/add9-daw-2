@@ -12,12 +12,27 @@ namespace add9daw2 {
 ArrangeWindow::ArrangeWindow(double left, double top, double right, double bottom, Window* parent) :
 		Window(left, top, right, bottom, parent) {
 	mouse_ = NULL;
+	// Add initial audio tracks
 	AddAudioTrack();
 	AddAudioTrack();
 	AddAudioTrack();
+	// Initialize colors
 	playback_locator_color_ = playback_locator_color_init_;
 	zoom_area_color_ = zoom_area_color_init_;
+	// Create zoom area
 	zoom_area_ = new Rect(left, bottom + ZOOM_AREA_HEIGHT, right, bottom);
+	// Add initial sections
+	AddSection(new Section(INTRO, 1, 5));
+	AddSection(new Section(VERSE, 5, 21));
+	AddSection(new Section(BREAK, 21, 29));
+	AddSection(new Section(BUILD, 29, 37));
+	AddSection(new Section(DROP, 37, 53));
+	AddSection(new Section(BREAK, 53, 57));
+	AddSection(new Section(VERSE, 57, 73));
+	AddSection(new Section(BREAK, 73, 81));
+	AddSection(new Section(BUILD, 81, 89));
+	AddSection(new Section(DROP, 89, 105));
+	AddSection(new Section(OUTRO, 105, 113));
 }
 
 ArrangeWindow::~ArrangeWindow() {
@@ -45,7 +60,7 @@ Rect ArrangeWindow::Draw() {
 	glVertex2d(left_, top_);
 	glEnd();
 	// Draw measure markers
-	int measure_number = 1;
+	int measure_number = 0;
 	for (double i=left_ - get_x_offset(); i<right_; i+=WidthOfMeasure()) {
 		if (i > left_) {
 			glBegin(GL_LINE_STRIP);
@@ -55,6 +70,19 @@ Rect ArrangeWindow::Draw() {
 			Font(GLUT_BITMAP_HELVETICA_10, (char *) std::to_string(measure_number).c_str(), i, top_ + 0.01);
 		}
 		measure_number++;
+	}
+	// Draw track sections
+	for (int i=0; i<sections_.size(); i++) {
+		Section* section = sections_[i];
+		section->set_color();
+		glBegin(GL_LINE_STRIP);
+		glVertex2d(left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure(), top_ + 0.1);
+		glVertex2d(left_ - get_x_offset() + section->get_end_measure() * WidthOfMeasure(), top_ + 0.1);
+		glVertex2d(left_ - get_x_offset() + section->get_end_measure() * WidthOfMeasure(), top_ + 0.05);
+		glVertex2d(left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure(), top_ + 0.05);
+		glVertex2d(left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure(), top_ + 0.1);
+		glEnd();
+		Font(GLUT_BITMAP_HELVETICA_10, (char *) section->get_name().c_str(), left_ - get_x_offset() + section->get_start_measure() * WidthOfMeasure() + 0.01, top_ + 0.07);
 	}
 	// Draw audio tracks
 	for (int i=0; i<audio_tracks_.size(); i++) {
@@ -115,6 +143,7 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 			break;
 		case DOUBLE_CLICK:
 			std::cout << "Arrange window received double click" << std::endl;
+			playback_locator_ = (mouse->x + get_x_offset() - left_) / get_width_of_sample();
 			break;
 		case DRAG:
 			std::cout << "Dragging in arrange window" << std::endl;

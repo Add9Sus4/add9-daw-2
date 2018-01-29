@@ -22,6 +22,7 @@
 #define ZOOM_AREA_PADDING	0.01
 
 #include "audio_track.h"
+#include "section.h"
 #include "window.h"
 
 namespace add9daw2 {
@@ -44,6 +45,7 @@ public:
 	inline double WidthOfMeasure() { return get_width_of_sample() * 44100.0 * 60.0 * 4.0 / bpm_; }
 	inline double get_width_of_sample() { return width_of_sample_ + width_of_sample_ * zoom_drag_z_amt_; }
 	void AddAudioTrack();
+	inline void AddSection(Section* section) { sections_.push_back(section); }
 	void AdvancePlaybackLocator(int frames_per_buffer);
 	inline void set_x_offset(double x_offset) { x_offset_ = x_offset; }
 	inline double get_x_offset() {
@@ -52,7 +54,7 @@ public:
 private:
 	bool playback_locator_selected_ = false;
 	bool zoom_area_dragging_ = false;
-	double width_of_sample_ = 0.000001, bpm_ = 140.0, zoom_drag_z_amt_ = 0.0;
+	double width_of_sample_ = 0.0000003, bpm_ = 140.0, zoom_drag_z_amt_ = 0.0;
 	int playback_locator_ = 1;
 	void Font(void *font, char *text, double x, double y);
 	std::vector<AudioTrack*> audio_tracks_;
@@ -64,6 +66,7 @@ private:
 	Color zoom_area_color_selected_ = {0.6, 0.6, 0.3};
 	Color zoom_area_color_;
 	Rect* zoom_area_;
+	std::vector<Section*> sections_;
 	double x_offset_ = 0.0;
 	double zoom_drag_x_amt_ = 0.0;
 	inline bool is_near_playback_locator(Mouse* mouse) {

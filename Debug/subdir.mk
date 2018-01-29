@@ -13,6 +13,7 @@ CPP_SRCS += \
 ../audio_track.cpp \
 ../files_window.cpp \
 ../folder.cpp \
+../section.cpp \
 ../vertical_scrollbar.cpp \
 ../window.cpp 
 
@@ -28,6 +29,7 @@ OBJS += \
 ./files_window.o \
 ./folder.o \
 ./run_daw.o \
+./section.o \
 ./vertical_scrollbar.o \
 ./window.o 
 
@@ -37,6 +39,7 @@ CPP_DEPS += \
 ./audio_track.d \
 ./files_window.d \
 ./folder.d \
+./section.d \
 ./vertical_scrollbar.d \
 ./window.d 
 
