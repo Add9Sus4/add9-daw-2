@@ -75,6 +75,7 @@ bool Section::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 			break;
 		case DOUBLE_CLICK:
 			std::cout << "Arrange window received double click" << std::endl;
+			parent_->AdjustBounds(start_measure_, end_measure_);
 			break;
 		case DRAG:
 			std::cout << "Dragging in arrange window" << std::endl;

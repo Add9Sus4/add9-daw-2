@@ -48,6 +48,9 @@ public:
 	virtual inline bool contains(Mouse* mouse) {
 		return mouse->x >= left_ && mouse->x <= right_ && mouse->y - translate_amount_ <= top_ && mouse->y - translate_amount_ >= bottom_;
 	}
+
+	// For the arrange window
+	virtual inline void AdjustBounds(int start_measure, int end_measure) {}
 	inline void set_bottom(double bottom) { bottom_ = bottom; }
 	inline void set_left(double left) { left_ = left; }
 	inline void set_right(double right) { right_ = right; }

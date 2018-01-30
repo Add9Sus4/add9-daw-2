@@ -35,6 +35,7 @@ public:
 			return mouse->x >= left_ && mouse->x <= right_ && mouse->y - translate_amount_ <= top_ && mouse->y - translate_amount_ >= bottom_;
 	}
 	Rect Draw() override;
+	void AdjustBounds(int start_measure, int end_measure) override;
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
 	inline bool is_in_zoom_area(Mouse* mouse) {
 		return mouse->x > zoom_area_->left && mouse->x < zoom_area_->right &&
@@ -55,6 +56,7 @@ private:
 	bool playback_locator_selected_ = false;
 	bool zoom_area_dragging_ = false;
 	double width_of_sample_ = 0.0000003, bpm_ = 140.0, zoom_drag_z_amt_ = 0.0;
+
 	int playback_locator_ = 1;
 	void Font(void *font, char *text, double x, double y);
 	std::vector<AudioTrack*> audio_tracks_;

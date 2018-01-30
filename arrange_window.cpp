@@ -110,6 +110,7 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 	// Check if mouse is in section area
 	bool mouse_in_section_area = false;
 	for (int i=0; i<sections_.size(); i++) {
+		// Update width of sample, bpm
 		if (sections_[i]->contains(mouse)) {
 			mouse_in_section_area = true;
 			sections_[i]->ReceiveMouseEvent(mouse, mouseEventType);
@@ -141,16 +142,20 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "Arrange window received click" << std::endl;
-			if (is_near_playback_locator(mouse)) {
+			if (is_near_playback_locator(mouse) && !is_in_zoom_area(mouse)) {
 				playback_locator_selected_ = true;
-			}
-			if (is_in_zoom_area(mouse)) {
+			} else if (is_in_zoom_area(mouse)) {
 				zoom_area_dragging_ = true;
+			} else {
+				playback_locator_ = (mouse->x + get_x_offset() - left_) / get_width_of_sample();
 			}
 			break;
 		case DOUBLE_CLICK:
 			std::cout << "Arrange window received double click" << std::endl;
-			playback_locator_ = (mouse->x + get_x_offset() - left_) / get_width_of_sample();
+			if (sections_.size() > 1) {
+				AdjustBounds(sections_[0]->get_start_measure(), sections_[sections_.size()-1]->get_end_measure());
+			}
+
 			break;
 		case DRAG:
 			std::cout << "Dragging in arrange window" << std::endl;
@@ -176,7 +181,7 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 			break;
 		case HOVER:
 			std::cout << "Hovering in arrange window" << std::endl;
-			if (is_near_playback_locator(mouse)) {
+			if (is_near_playback_locator(mouse) && !is_in_zoom_area(mouse)) {
 				playback_locator_color_ = playback_locator_color_selected_;
 			} else {
 				playback_locator_color_ = playback_locator_color_init_;
@@ -201,6 +206,13 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 			break;
 	}
 	return true;
+}
+
+void ArrangeWindow::AdjustBounds(int start_measure, int end_measure) {
+	double current_length_in_measures = width() / WidthOfMeasure();
+	double new_length_in_measures = (double) end_measure - start_measure;
+	width_of_sample_ *= current_length_in_measures / new_length_in_measures;
+	x_offset_ = start_measure * WidthOfMeasure();
 }
 
 double* ArrangeWindow::GetAudio(int frames_per_buffer, int channels) {
