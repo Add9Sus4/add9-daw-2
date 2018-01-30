@@ -23,10 +23,27 @@ Rect Menu::Draw() {
 	glVertex2d(left_, bottom_);
 	glVertex2d(left_, top_);
 	glEnd();
+	// Draw the close icon
+	glBegin(GL_LINE_STRIP);
+	glVertex2d(icon_->left + ICON_PADDING, icon_->top - ICON_PADDING);
+	glVertex2d(icon_->left + ICON_PADDING, icon_->bottom + ICON_PADDING);
+	glVertex2d(icon_->right - ICON_PADDING, icon_->bottom + ICON_PADDING);
+	glVertex2d(icon_->left + ICON_PADDING, icon_->top - ICON_PADDING);
+	glVertex2d(icon_->right - ICON_PADDING, icon_->top - ICON_PADDING);
+	glVertex2d(icon_->left + ICON_PADDING, icon_->bottom + ICON_PADDING);
+	glVertex2d(icon_->right - ICON_PADDING, icon_->bottom + ICON_PADDING);
+	glVertex2d(icon_->right - ICON_PADDING, icon_->top - ICON_PADDING);
+	glEnd();
 	return Rect(left_, top_, right_, bottom_);
 }
 
 bool Menu::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
+	// If click in the icon area
+	if (mouseEventType == CLICK && mouse->x > icon_->left && mouse->x < icon_->right
+			&& mouse->y < icon_->top && mouse->y > icon_->bottom) {
+		set_opened(false);
+		return true;
+	}
 	// Menu options
 	for (int i=0; i<options_.size(); i++) {
 		options_[i]->ReceiveMouseEvent(mouse, mouseEventType);
@@ -59,12 +76,12 @@ bool Menu::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 void Menu::add_option(std::string label) {
 	// If there are no options put the option at the top
 	if (options_.size() == 0) {
-		options_.push_back(new MenuOption(label, left_, top_, right_, top_ - OPTION_HEIGHT, this));
+		options_.push_back(new MenuOption(label, left_, top_, right_ - ICON_WIDTH, top_ - OPTION_HEIGHT, this));
 	}
 	// Otherwise, place new audio track below existing tracks
 	else {
 		MenuOption* last_option = options_[options_.size() - 1];
-		options_.push_back(new MenuOption(label, left_, last_option->get_bottom(), right_, last_option->get_bottom() - OPTION_HEIGHT, this));
+		options_.push_back(new MenuOption(label, left_, last_option->get_bottom(), right_ - ICON_WIDTH, last_option->get_bottom() - OPTION_HEIGHT, this));
 	}
 }
 

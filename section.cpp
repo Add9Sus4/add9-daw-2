@@ -53,7 +53,12 @@ void Section::set_default_values(SectionType section_type) {
 Rect Section::Draw() {
 	// Draw menu if open
 	if (menu_ != 0) {
+		// If the menu is not opened, delete it
+		if (!menu_->is_opened()) {
+			menu_ = 0;
+		} else {
 		menu_->Draw();
+		}
 	}
 
 	// Draw the section
@@ -82,18 +87,16 @@ bool Section::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "Section received click" << std::endl;
-			// If the section has an open menu, close it
-			if (menu_ != 0) {
-				menu_ = 0;
-			}
-			// Control click on section
+			// Open/close menu with control click on section
 			if (glutGetModifiers() == GLUT_ACTIVE_CTRL) {
-				std::cout << "new menu created" << std::endl;
-				menu_ = new Menu(parent_->get_left(), parent_->get_top(),
-						parent_->get_right(), parent_->get_bottom(), this);
-				menu_->add_option("Add pattern (kick)");
-				menu_->add_option("Add pattern (snare");
-				menu_->add_option("Add pattern (hat)");
+				if (menu_ == 0) {
+					std::cout << "new menu created" << std::endl;
+					menu_ = new Menu(parent_->get_left(), parent_->get_top(),
+							parent_->get_right(), parent_->get_bottom(), this);
+					menu_->add_option("Add pattern (kick)");
+					menu_->add_option("Add pattern (snare");
+					menu_->add_option("Add pattern (hat)");
+				}
 			}
 			break;
 		case DOUBLE_CLICK:

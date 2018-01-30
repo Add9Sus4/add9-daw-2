@@ -8,6 +8,7 @@
 #ifndef MENU_OPTION_H_
 #define MENU_OPTION_H_
 
+#define ICON_WIDTH		0.03
 #define OPTION_PADDING	0.01
 
 #include <glut/GLUT.h>
