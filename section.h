@@ -15,6 +15,7 @@
 #include <string>
 
 #include "color.h"
+#include "menu.h"
 #include "window.h"
 
 namespace add9daw2 {
@@ -67,6 +68,7 @@ public:
 		bottom_ = bottom;
 	}
 	inline void set_not_selected() { color_factor_ = color_factor_init_; }
+	inline bool has_menu_open() { return menu_ != 0; }
 	void Font(void *font, char *text, double x, double y);
 private:
 	SectionType section_type_;
@@ -75,6 +77,7 @@ private:
 	double color_factor_init_ = 0.5;
 	double color_factor_selected_ = 1.0;
 	double color_factor_;
+	Menu* menu_ = 0;
 };
 
 } /* namespace add9daw2 */

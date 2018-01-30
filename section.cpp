@@ -51,6 +51,12 @@ void Section::set_default_values(SectionType section_type) {
 }
 
 Rect Section::Draw() {
+	// Draw menu if open
+	if (menu_ != 0) {
+		menu_->Draw();
+	}
+
+	// Draw the section
 	set_color();
 	glBegin(GL_LINE_STRIP);
 	glVertex2d(left_ + SECTION_PADDING, top_);
@@ -64,6 +70,10 @@ Rect Section::Draw() {
 }
 
 bool Section::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
+	// Check menus
+	if (menu_ != 0) {
+		menu_->ReceiveMouseEvent(mouse, mouseEventType);
+	}
 	if (!contains(mouse)) {
 		color_factor_ = color_factor_init_;
 		return false;
@@ -71,20 +81,33 @@ bool Section::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 	color_factor_ = color_factor_selected_;
 	switch (mouseEventType) {
 		case CLICK:
-			std::cout << "Arrange window received click" << std::endl;
+			std::cout << "Section received click" << std::endl;
+			// If the section has an open menu, close it
+			if (menu_ != 0) {
+				menu_ = 0;
+			}
+			// Control click on section
+			if (glutGetModifiers() == GLUT_ACTIVE_CTRL) {
+				std::cout << "new menu created" << std::endl;
+				menu_ = new Menu(parent_->get_left(), parent_->get_top(),
+						parent_->get_right(), parent_->get_bottom(), this);
+				menu_->add_option("Add pattern (kick)");
+				menu_->add_option("Add pattern (snare");
+				menu_->add_option("Add pattern (hat)");
+			}
 			break;
 		case DOUBLE_CLICK:
-			std::cout << "Arrange window received double click" << std::endl;
+			std::cout << "Section received double click" << std::endl;
 			parent_->AdjustBounds(start_measure_, end_measure_);
 			break;
 		case DRAG:
-			std::cout << "Dragging in arrange window" << std::endl;
+			std::cout << "Dragging in section" << std::endl;
 			break;
 		case HOVER:
-			std::cout << "Hovering in arrange window" << std::endl;
+			std::cout << "Hovering in section" << std::endl;
 			break;
 		case RELEASE:
-			std::cout << "Arrange window received mouse release" << std::endl;
+			std::cout << "Section received mouse release" << std::endl;
 			break;
 		default:
 			break;

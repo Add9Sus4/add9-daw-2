@@ -40,15 +40,24 @@ ArrangeWindow::~ArrangeWindow() {
 }
 
 Rect ArrangeWindow::Draw() {
-	// Draw zoom area
-	glColor3d(zoom_area_color_.r, zoom_area_color_.g, zoom_area_color_.b);
-	glBegin(GL_LINE_STRIP);
-	glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
-	glVertex2d(zoom_area_->right - ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
-	glVertex2d(zoom_area_->right - ZOOM_AREA_PADDING, zoom_area_->bottom + ZOOM_AREA_PADDING);
-	glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->bottom + ZOOM_AREA_PADDING);
-	glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
-	glEnd();
+	// If a menu is open
+	bool menu_open = false;
+	for (int i=0; i<sections_.size(); i++) {
+		if (sections_[i]->has_menu_open()) {
+			menu_open = true;
+		}
+	}
+	if (!menu_open) {
+		// Draw zoom area
+		glColor3d(zoom_area_color_.r, zoom_area_color_.g, zoom_area_color_.b);
+		glBegin(GL_LINE_STRIP);
+		glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
+		glVertex2d(zoom_area_->right - ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
+		glVertex2d(zoom_area_->right - ZOOM_AREA_PADDING, zoom_area_->bottom + ZOOM_AREA_PADDING);
+		glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->bottom + ZOOM_AREA_PADDING);
+		glVertex2d(zoom_area_->left + ZOOM_AREA_PADDING, zoom_area_->top - ZOOM_AREA_PADDING);
+		glEnd();
+	}
 
 	// Draw window area
 	glColor3d(color_.r, color_.g, color_.b);
@@ -59,18 +68,6 @@ Rect ArrangeWindow::Draw() {
 	glVertex2d(left_, bottom_);
 	glVertex2d(left_, top_);
 	glEnd();
-	// Draw measure markers
-	int measure_number = 0;
-	for (double i=left_ - get_x_offset(); i<right_; i+=WidthOfMeasure()) {
-		if (i > left_) {
-			glBegin(GL_LINE_STRIP);
-			glVertex2d(i, top_);
-			glVertex2d(i, top_ - 0.01);
-			glEnd();
-			Font(GLUT_BITMAP_HELVETICA_10, (char *) std::to_string(measure_number).c_str(), i, top_ + 0.01);
-		}
-		measure_number++;
-	}
 	// Draw track sections
 	for (int i=0; i<sections_.size(); i++) {
 		Section* section = sections_[i];
@@ -80,37 +77,68 @@ Rect ArrangeWindow::Draw() {
 				top_ + 0.05);
 		section->Draw();
 	}
-	// Draw audio tracks
-	for (int i=0; i<audio_tracks_.size(); i++) {
-		audio_tracks_[i]->set_sample_width(get_width_of_sample());
-		audio_tracks_[i]->set_x_offset(get_x_offset());
-		audio_tracks_[i]->set_bpm(bpm_);
-		audio_tracks_[i]->Draw();
-	}
-	// Draw the ghost of any audio sample that's currently being dragged in the arrange window
-	if (mouse_) {
-		if (mouse_->file != NULL) {
-			std::cout << "mouse contains file: " << mouse_->file->get_name() << std::endl;
-			mouse_->file->DrawGhost(mouse_->x, mouse_->y, get_width_of_sample(), bpm_);
+	if (!menu_open) {
+		// Draw measure markers
+		double num_measures = width() / WidthOfMeasure();
+		int measure_number = 0;
+		for (double i=left_ - get_x_offset(); i<right_; i+=WidthOfMeasure()) {
+			if (i > left_) {
+				glColor3d(color_.r, color_.g, color_.b);
+				glBegin(GL_LINE_STRIP);
+				glVertex2d(i, top_);
+				glVertex2d(i, top_ - 0.01);
+				glEnd();
+				// If more than 50 measures are visible, draw every other one
+				if (measure_number%4 == 0) {
+					Font(GLUT_BITMAP_HELVETICA_10, (char *) std::to_string(measure_number).c_str(), i, top_ + 0.01);
+				} else if (measure_number%4 == 2) {
+					if (num_measures < 100.0) {
+						Font(GLUT_BITMAP_HELVETICA_10, (char *) std::to_string(measure_number).c_str(), i, top_ + 0.01);
+					}
+				} else {
+					if (num_measures < 50.0) {
+						Font(GLUT_BITMAP_HELVETICA_10, (char *) std::to_string(measure_number).c_str(), i, top_ + 0.01);
+					}
+				}
+			}
+			measure_number++;
 		}
-	}
-	// Draw playback locator
-	if (get_width_of_sample() * playback_locator_ > get_x_offset() && get_width_of_sample() * playback_locator_ + left_ - get_x_offset() < right_) {
-		glColor3d(playback_locator_color_.r,playback_locator_color_.g,playback_locator_color_.b);
-		glBegin(GL_LINE_STRIP);
-		glVertex2d(left_ - get_x_offset() + get_width_of_sample() * playback_locator_, top_);
-		glVertex2d(left_ - get_x_offset() + get_width_of_sample() * playback_locator_, bottom_);
-		glEnd();
+		// Draw audio tracks
+		for (int i=0; i<audio_tracks_.size(); i++) {
+			audio_tracks_[i]->set_sample_width(get_width_of_sample());
+			audio_tracks_[i]->set_x_offset(get_x_offset());
+			audio_tracks_[i]->set_bpm(bpm_);
+			audio_tracks_[i]->Draw();
+		}
+		// Draw the ghost of any audio sample that's currently being dragged in the arrange window
+		if (mouse_) {
+			if (mouse_->file != NULL) {
+				std::cout << "mouse contains file: " << mouse_->file->get_name() << std::endl;
+				mouse_->file->DrawGhost(mouse_->x, mouse_->y, get_width_of_sample(), bpm_);
+			}
+		}
+		// Draw playback locator
+		if (get_width_of_sample() * playback_locator_ > get_x_offset() && get_width_of_sample() * playback_locator_ + left_ - get_x_offset() < right_) {
+			glColor3d(playback_locator_color_.r,playback_locator_color_.g,playback_locator_color_.b);
+			glBegin(GL_LINE_STRIP);
+			glVertex2d(left_ - get_x_offset() + get_width_of_sample() * playback_locator_, top_);
+			glVertex2d(left_ - get_x_offset() + get_width_of_sample() * playback_locator_, bottom_);
+			glEnd();
+		}
 	}
 	return Rect(left_, top_, right_, bottom_);
 }
 
 bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 	mouse_ = mouse;
-	// Check if mouse is in section area
+	// Check if mouse is in section area, and also if a menu is open
 	bool mouse_in_section_area = false;
+	bool menu_open = false;
 	for (int i=0; i<sections_.size(); i++) {
-		// Update width of sample, bpm
+		if (sections_[i]->has_menu_open()) {
+			menu_open = true;
+			sections_[i]->ReceiveMouseEvent(mouse, mouseEventType);
+		}
 		if (sections_[i]->contains(mouse)) {
 			mouse_in_section_area = true;
 			sections_[i]->ReceiveMouseEvent(mouse, mouseEventType);
@@ -119,6 +147,10 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 		}
 	}
 	if (mouse_in_section_area) {
+		ResetColor();
+		return false;
+	}
+	if (menu_open) {
 		ResetColor();
 		return false;
 	}
