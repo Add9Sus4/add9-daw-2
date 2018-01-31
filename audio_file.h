@@ -43,7 +43,8 @@ inline int CalculateNextPowerOfTwo(int number) {
 // Use this class to get and use audio data from a file.
 class AudioFile : public Window {
 public:
-	AudioFile(std::string file_name, std::string dir, double left, double top, double right, double bottom, Window* parent) :
+	AudioFile(std::string file_name, std::string dir, double left, double top, double right, double bottom,
+			Window* parent) :
 			Window(left, top, right, bottom, parent),
 			loaded_(false),
 			current_position_(0.0),
@@ -53,6 +54,8 @@ public:
 			name_(file_name),
 			dir_(dir) {}
 	virtual ~AudioFile() {}
+
+	static AudioFile* GetRandomSampleFromDir(std::string dir);
 
 	// Fills a block with audio data.
 	bool FillBlockWithAudio(float* empty_block, int frames_per_buffer, int channels);

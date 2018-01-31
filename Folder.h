@@ -43,7 +43,6 @@ private:
 	std::vector<std::string> file_names_;
 	std::vector<AudioFile*> files_;
 	std::string path_;
-	Window* parent_;
 };
 
 } /* namespace add9daw2 */

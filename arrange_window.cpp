@@ -6,6 +6,7 @@
  */
 
 #include "arrange_window.h"
+#include "resources.h"
 
 namespace add9daw2 {
 
@@ -33,6 +34,10 @@ ArrangeWindow::ArrangeWindow(double left, double top, double right, double botto
 	AddSection(new Section(BUILD, 81, 89, this));
 	AddSection(new Section(DROP, 89, 105, this));
 	AddSection(new Section(OUTRO, 105, 113, this));
+
+	if (sections_.size() > 1) {
+		AdjustBounds(sections_[0]->get_start_measure(), sections_[sections_.size()-1]->get_end_measure());
+	}
 }
 
 ArrangeWindow::~ArrangeWindow() {
@@ -187,7 +192,6 @@ bool ArrangeWindow::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventTyp
 			if (sections_.size() > 1) {
 				AdjustBounds(sections_[0]->get_start_measure(), sections_[sections_.size()-1]->get_end_measure());
 			}
-
 			break;
 		case DRAG:
 			std::cout << "Dragging in arrange window" << std::endl;
@@ -299,6 +303,23 @@ void ArrangeWindow::AddAudioTrack() {
 			audio_tracks_.push_back(new AudioTrack(left_, last_audio_track->get_bottom(), right_, last_audio_track->get_bottom() - AUDIO_TRACK_HEIGHT, this));
 		}
 	}
+
+void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int end_measure) {
+	// Get random sample
+	AudioFile* file = AudioFile::GetRandomSampleFromDir(KICK_DIR_PATH);
+	std::cout << "num frames: " << file->get_num_frames() << std::endl;
+	// Get first audio track (TODO: make this configurable later)
+	if (audio_tracks_.size() == 0) {
+		return;
+	}
+	AudioTrack* track = audio_tracks_.front();
+	int start_in_samples = start_measure * num_samples_per_measure();
+	int end_in_samples = end_measure * num_samples_per_measure();
+	double increment = num_samples_per_measure() / 4.0;
+	for (int i=start_in_samples; i<end_in_samples; i += increment) {
+		track->AddAudioClip(i, file);
+	}
+}
 
 void ArrangeWindow::AdvancePlaybackLocator(int frames_per_buffer) {
 	playback_locator_ += frames_per_buffer;

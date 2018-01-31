@@ -322,6 +322,7 @@ void RunPortAudio() {
 
 int main(int argc, char **argv) {
 	using namespace add9daw2;
+	srand(time(NULL));
 	InitializeGlut(argc, argv);
 	RunPortAudio();
 }

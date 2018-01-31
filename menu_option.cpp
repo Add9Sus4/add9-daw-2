@@ -5,7 +5,10 @@
  *      Author: aarondawson
  */
 
+#include "arrange_window.h"
+#include "menu.h"
 #include "menu_option.h"
+#include "section.h"
 
 namespace add9daw2 {
 
@@ -34,6 +37,16 @@ bool MenuOption::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) 
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "Menu received click" << std::endl;
+			if (label_ == "Add pattern (kick)") {
+				std::cout << "Adding kick pattern" << std::endl;
+				Menu* menu = (Menu*) get_parent();
+				Section* section = (Section*) menu->get_parent();
+				ArrangeWindow* arrange_window = (ArrangeWindow*) section->get_parent();
+				std::cout << "section: " << section->get_start_measure() << ", " << section->get_end_measure() << std::endl;
+				arrange_window->AddPattern(KICK, section->get_start_measure(), section->get_end_measure());
+				// Close menu
+				menu->set_opened(false);
+			}
 			break;
 		case DOUBLE_CLICK:
 			std::cout << "Menu received double click" << std::endl;

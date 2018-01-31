@@ -11,7 +11,7 @@ namespace add9daw2 {
 
 Folder::Folder(double left, double top, double right, double bottom, Window* parent) :
 		Window(left, top, right, bottom, parent),
-		open_(false), parent_(parent) {
+		open_(false) {
 
 }
 

@@ -15,6 +15,8 @@
 
 namespace add9daw2 {
 
+class ArrangeWindow;
+
 typedef enum MouseEventType {
 	CLICK,
 	DOUBLE_CLICK,

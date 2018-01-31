@@ -29,6 +29,7 @@ public:
 	Rect Draw() override;
 	inline std::vector<AudioClip*> get_audio_clips() { return audio_clips_; }
 	void AddAudioClip(double position, AudioFile* file);
+	void AddAudioClip(int start_in_samples, AudioFile* file);
 	inline void set_sample_width(double width_of_sample) {
 		width_of_sample_ = width_of_sample;
 		for (int i=0; i<audio_clips_.size(); i++) {

@@ -9,6 +9,33 @@
 
 namespace add9daw2 {
 
+AudioFile* AudioFile::GetRandomSampleFromDir(std::string dir) {
+		std::cout << "Loading random file from " << dir << "..." << std::endl;
+	DIR *directory;
+	struct dirent *entry;
+	std::vector<std::string> file_names_;
+
+	// Return if the directory cannot be opened
+	if ((directory = opendir(dir.c_str())) == NULL) {
+		std::cout << "Cannot open directory " << directory << std::endl;
+		return 0;
+	}
+
+	chdir(dir.c_str());
+	while ((entry = readdir(directory)) != NULL) {
+		if((strcasestr(entry->d_name, ".wav") != NULL ||
+					strcasestr(entry->d_name, ".aiff") != NULL ||
+					strcasestr(entry->d_name, ".aif") != NULL) &&
+					strcasestr(entry->d_name, ".asd") == NULL) {
+			file_names_.push_back(entry->d_name);
+		}
+	}
+	int random_index = rand() % file_names_.size();
+	AudioFile* file = new AudioFile(file_names_[random_index], dir, 0, 0, 0, 0, 0);
+	file->LoadAudio();
+	return file == 0 ? 0 : file;
+}
+
 bool AudioFile::FillBlockWithAudio(float* empty_block, int frames_per_buffer, int channels) {
 	// If the audio is mono and output is mono
 	if (is_mono() && channels == MONO) {

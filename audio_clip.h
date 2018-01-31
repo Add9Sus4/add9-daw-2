@@ -22,13 +22,14 @@ namespace add9daw2 {
  */
 class AudioClip : public Window {
 public:
-	AudioClip(double left, double top, double right, double bottom, Window* parent, double position, AudioFile* file, int start_in_samples, int end_in_samples) :
+	AudioClip(double left, double top, double right, double bottom, Window* parent,
+			double position, AudioFile* file, int start_in_samples, int end_in_samples) :
 		Window(left, top, right, bottom, parent),
 		width_of_sample_(0.0001),
 		bpm_(140),
-		file_(file),
 		start_in_samples_(start_in_samples),
-		end_in_samples_(end_in_samples)
+		end_in_samples_(end_in_samples),
+		file_(file)
 		{}
 	virtual ~AudioClip();
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
