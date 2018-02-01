@@ -27,13 +27,6 @@
 
 namespace add9daw2 {
 
-typedef enum SampleType {
-	KICK,
-	SNARE,
-	TOM,
-	HAT
-} SampleType;
-
 class ArrangeWindow : public Window {
 public:
 	ArrangeWindow(double left, double top, double right, double bottom, Window* parent);
@@ -53,7 +46,7 @@ public:
 	inline double WidthOfMeasure() { return get_width_of_sample() * 44100.0 * 60.0 * 4.0 / bpm_; }
 	inline double get_width_of_sample() { return width_of_sample_ + width_of_sample_ * zoom_drag_z_amt_; }
 	inline int num_samples_per_measure() { return 4.0 * 60.0 * 44100 / bpm_; }
-	void AddAudioTrack();
+	void AddAudioTrack(SampleType sample_type);
 	void AddPattern(SampleType sample_type, int start_measure, int end_measure);
 	inline void AddSection(Section* section) { sections_.push_back(section); }
 	void AdvancePlaybackLocator(int frames_per_buffer);

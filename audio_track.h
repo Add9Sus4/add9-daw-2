@@ -20,13 +20,21 @@
 
 namespace add9daw2 {
 
+typedef enum SampleType {
+	KICK,
+	SNARE,
+	TOM,
+	HAT
+} SampleType;
+
 class AudioTrack : public Window {
 public:
-	AudioTrack(double left, double top, double right, double bottom, Window* parent) :
-		Window(left, top, right, bottom, parent), width_of_sample_(0.0001), bpm_(140.0) {}
+	AudioTrack(SampleType sample_type, double left, double top, double right, double bottom, Window* parent) :
+		Window(left, top, right, bottom, parent), width_of_sample_(0.0001), bpm_(140.0), sample_type_(sample_type) {}
 	virtual ~AudioTrack();
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
 	Rect Draw() override;
+	inline SampleType get_sample_type() { return sample_type_; }
 	inline std::vector<AudioClip*> get_audio_clips() { return audio_clips_; }
 	void AddAudioClip(double position, AudioFile* file);
 	void AddAudioClip(int start_in_samples, AudioFile* file);
@@ -44,6 +52,7 @@ private:
 	std::vector<AudioClip*> audio_clips_;
 	double width_of_sample_, bpm_;
 	double x_offset_ = 0.0;
+	SampleType sample_type_;
 };
 
 } /* namespace add9daw2 */

@@ -34,17 +34,20 @@ bool MenuOption::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) 
 		return false;
 	}
 	color_ = option_color_selected_;
+	Menu* menu = (Menu*) get_parent();
+	Section* section = (Section*) menu->get_parent();
+	ArrangeWindow* arrange_window = (ArrangeWindow*) section->get_parent();
 	switch (mouseEventType) {
 		case CLICK:
 			std::cout << "Menu received click" << std::endl;
 			if (label_ == "Add pattern (kick)") {
-				std::cout << "Adding kick pattern" << std::endl;
-				Menu* menu = (Menu*) get_parent();
-				Section* section = (Section*) menu->get_parent();
-				ArrangeWindow* arrange_window = (ArrangeWindow*) section->get_parent();
-				std::cout << "section: " << section->get_start_measure() << ", " << section->get_end_measure() << std::endl;
 				arrange_window->AddPattern(KICK, section->get_start_measure(), section->get_end_measure());
-				// Close menu
+				menu->set_opened(false);
+			} else if (label_ == "Add pattern (snare)") {
+				arrange_window->AddPattern(SNARE, section->get_start_measure(), section->get_end_measure());
+				menu->set_opened(false);
+			} else if (label_ == "Add pattern (hat)") {
+				arrange_window->AddPattern(HAT, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			}
 			break;

@@ -14,9 +14,9 @@ ArrangeWindow::ArrangeWindow(double left, double top, double right, double botto
 		Window(left, top, right, bottom, parent) {
 	mouse_ = NULL;
 	// Add initial audio tracks
-	AddAudioTrack();
-	AddAudioTrack();
-	AddAudioTrack();
+	AddAudioTrack(KICK);
+	AddAudioTrack(SNARE);
+	AddAudioTrack(HAT);
 	// Initialize colors
 	playback_locator_color_ = playback_locator_color_init_;
 	zoom_area_color_ = zoom_area_color_init_;
@@ -292,33 +292,77 @@ double* ArrangeWindow::GetAudio(int frames_per_buffer, int channels) {
 	return audio;
 }
 
-void ArrangeWindow::AddAudioTrack() {
+void ArrangeWindow::AddAudioTrack(SampleType sample_type) {
 		// If there are no audio tracks put the track at the top
 		if (audio_tracks_.size() == 0) {
-			audio_tracks_.push_back(new AudioTrack(left_, top_, right_, top_ - AUDIO_TRACK_HEIGHT, this));
+			audio_tracks_.push_back(new AudioTrack(sample_type, left_, top_, right_, top_ - AUDIO_TRACK_HEIGHT, this));
 		}
 		// Otherwise, place new audio track below existing tracks
 		else {
 			AudioTrack* last_audio_track = audio_tracks_[audio_tracks_.size() - 1];
-			audio_tracks_.push_back(new AudioTrack(left_, last_audio_track->get_bottom(), right_, last_audio_track->get_bottom() - AUDIO_TRACK_HEIGHT, this));
+			audio_tracks_.push_back(new AudioTrack(sample_type, left_, last_audio_track->get_bottom(), right_, last_audio_track->get_bottom() - AUDIO_TRACK_HEIGHT, this));
 		}
 	}
 
 void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int end_measure) {
-	// Get random sample
-	AudioFile* file = AudioFile::GetRandomSampleFromDir(KICK_DIR_PATH);
-	std::cout << "num frames: " << file->get_num_frames() << std::endl;
-	// Get first audio track (TODO: make this configurable later)
-	if (audio_tracks_.size() == 0) {
-		return;
+	AudioFile* file = 0;
+	bool add = false;
+	int start_in_samples = 0, end_in_samples = 0, increment = 0;
+	switch (sample_type) {
+		case KICK:
+			// Get random kick sample
+			file = AudioFile::GetRandomSampleFromDir(KICK_DIR_PATH);
+			// Find the kick audio track
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					start_in_samples = start_measure * num_samples_per_measure();
+					end_in_samples = end_measure * num_samples_per_measure();
+					increment = num_samples_per_measure() / 4.0;
+					for (int j=start_in_samples; j<end_in_samples; j += increment) {
+						audio_tracks_[i]->AddAudioClip(j, file);
+					}
+				}
+			}
+			break;
+		case SNARE:
+//			 Get random snare sample
+			file = AudioFile::GetRandomSampleFromDir(SNARE_DIR_PATH);
+//			 Find the snare audio track
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					start_in_samples = start_measure * num_samples_per_measure();
+					end_in_samples = end_measure * num_samples_per_measure();
+					increment = num_samples_per_measure() / 2.0;
+					for (int j=start_in_samples; j<end_in_samples; j += increment) {
+						if (add) {
+							audio_tracks_[i]->AddAudioClip(j, file);
+						}
+						add = !add;
+					}
+				}
+			}
+			break;
+		case HAT:
+//			 Get random hat sample
+			file = AudioFile::GetRandomSampleFromDir(HAT_DIR_PATH);
+//			 Find the hat audio track
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					start_in_samples = start_measure * num_samples_per_measure();
+					end_in_samples = end_measure * num_samples_per_measure();
+					increment = num_samples_per_measure() / 16.0;
+					for (int j=start_in_samples; j<end_in_samples; j += increment) {
+						if (rand()%100 > 50) {
+							audio_tracks_[i]->AddAudioClip(j, file);
+						}
+					}
+				}
+			}
+			break;
+		default:
+			break;
 	}
-	AudioTrack* track = audio_tracks_.front();
-	int start_in_samples = start_measure * num_samples_per_measure();
-	int end_in_samples = end_measure * num_samples_per_measure();
-	double increment = num_samples_per_measure() / 4.0;
-	for (int i=start_in_samples; i<end_in_samples; i += increment) {
-		track->AddAudioClip(i, file);
-	}
+
 }
 
 void ArrangeWindow::AdvancePlaybackLocator(int frames_per_buffer) {
