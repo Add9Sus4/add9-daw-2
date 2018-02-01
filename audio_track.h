@@ -17,33 +17,10 @@
 #include <vector>
 
 #include "audio_clip.h"
+#include "pattern.h"
 #include "window.h"
 
 namespace add9daw2 {
-
-typedef enum SampleType {
-	CLAP,
-	CRASH,
-	EIGHT_O_EIGHT,
-	HAT,
-	HIGH_IMPACT,
-	KICK,
-	LOW_IMPACT,
-	PERC,
-	PITCH_DOWN,
-	PITCH_RISER,
-	PRYDA,
-	PUNCHY_IMPACT,
-	RIDE,
-	SHAKER,
-	SNAP,
-	SNARE,
-	SUB_DROP,
-	SWEEP_DOWN,
-	SWEEP_UP,
-	TOM,
-	WAR_DRUM
-} SampleType;
 
 class AudioTrack : public Window {
 public:

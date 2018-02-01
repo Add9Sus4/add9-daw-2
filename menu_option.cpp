@@ -6,6 +6,7 @@
  */
 
 #include "arrange_window.h"
+#include "kick_pattern.h"
 #include "menu.h"
 #include "menu_option.h"
 #include "section.h"
@@ -41,31 +42,31 @@ bool MenuOption::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) 
 		case CLICK:
 			std::cout << "Menu received click" << std::endl;
 			if (label_ == "Add pattern (kick)") {
-				arrange_window->AddPattern(KICK, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(new KickPattern(FOUR_ON_THE_FLOOR), KICK, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (clap)") {
-				arrange_window->AddPattern(CLAP, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(0, CLAP, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (snare)") {
-				arrange_window->AddPattern(SNARE, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(0, SNARE, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (hat)") {
-				arrange_window->AddPattern(HAT, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(0, HAT, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (high impact)") {
-				arrange_window->AddPattern(HIGH_IMPACT, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(0, HIGH_IMPACT, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (low impact)") {
-				arrange_window->AddPattern(LOW_IMPACT, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(0, LOW_IMPACT, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (punchy impact)") {
-				arrange_window->AddPattern(PUNCHY_IMPACT, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(0, PUNCHY_IMPACT, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (sweep up)") {
-				arrange_window->AddPattern(SWEEP_UP, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(0, SWEEP_UP, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (sweep down)") {
-				arrange_window->AddPattern(SWEEP_DOWN, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(0, SWEEP_DOWN, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			}
 			break;

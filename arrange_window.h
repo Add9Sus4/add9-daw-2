@@ -21,6 +21,7 @@
 #define ZOOM_AREA_PADDING	0.01
 
 #include "audio_track.h"
+#include "pattern.h"
 #include "section.h"
 #include "window.h"
 
@@ -46,7 +47,7 @@ public:
 	inline double get_width_of_sample() { return width_of_sample_ + width_of_sample_ * zoom_drag_z_amt_; }
 	inline int num_samples_per_measure() { return 4.0 * 60.0 * 44100 / bpm_; }
 	void AddAudioTrack(SampleType sample_type);
-	void AddPattern(SampleType sample_type, int start_measure, int end_measure);
+	void AddPattern(Pattern* pattern, SampleType sample_type, int start_measure, int end_measure);
 	inline void AddSection(Section* section) { sections_.push_back(section); }
 	void AdvancePlaybackLocator(int frames_per_buffer);
 	inline void set_x_offset(double x_offset) { x_offset_ = x_offset; }

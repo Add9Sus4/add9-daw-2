@@ -300,7 +300,7 @@ void ArrangeWindow::AddAudioTrack(SampleType sample_type) {
 		}
 	}
 
-void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int end_measure) {
+void ArrangeWindow::AddPattern(Pattern* pattern, SampleType sample_type, int start_measure, int end_measure) {
 	// If no track exists with the specified sample type, create it.
 	bool track_exists = false;
 	for (int i=0; i<audio_tracks_.size(); i++) {
@@ -315,6 +315,7 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 	bool add = false;
 	int start_in_samples = 0, end_in_samples = 0, increment = 0;
 	std::string pattern_type = "Offbeat";
+	std::vector<bool> data;
 	switch (sample_type) {
 		case KICK:
 			// Get random kick sample
@@ -324,9 +325,11 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 				if (audio_tracks_[i]->get_sample_type() == sample_type) {
 					start_in_samples = start_measure * num_samples_per_measure();
 					end_in_samples = end_measure * num_samples_per_measure();
-					increment = num_samples_per_measure() / 4.0;
-					for (int j=start_in_samples; j<end_in_samples; j += increment) {
-						audio_tracks_[i]->AddAudioClip(j, file);
+					data = pattern->get_data(end_in_samples - start_in_samples, num_samples_per_measure());
+					for (int j=0; j<data.size(); j ++) {
+						if (data[j]) {
+							audio_tracks_[i]->AddAudioClip(start_in_samples + j, file);
+						}
 					}
 				}
 			}
@@ -447,7 +450,8 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 		default:
 			break;
 	}
-
+	// delete pattern
+	delete pattern;
 }
 
 void ArrangeWindow::AdvancePlaybackLocator(int frames_per_buffer) {
