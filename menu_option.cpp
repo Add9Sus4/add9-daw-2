@@ -42,7 +42,7 @@ bool MenuOption::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) 
 		case CLICK:
 			std::cout << "Menu received click" << std::endl;
 			if (label_ == "Add pattern (kick)") {
-				arrange_window->AddPattern(new KickPattern(FOUR_ON_THE_FLOOR), KICK, section->get_start_measure(), section->get_end_measure());
+				arrange_window->AddPattern(new KickPattern(DUBSTEP), KICK, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
 			} else if (label_ == "Add pattern (clap)") {
 				arrange_window->AddPattern(0, CLAP, section->get_start_measure(), section->get_end_measure());
