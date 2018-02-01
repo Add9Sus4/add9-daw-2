@@ -43,6 +43,9 @@ bool MenuOption::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) 
 			if (label_ == "Add pattern (kick)") {
 				arrange_window->AddPattern(KICK, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
+			} else if (label_ == "Add pattern (clap)") {
+				arrange_window->AddPattern(CLAP, section->get_start_measure(), section->get_end_measure());
+				menu->set_opened(false);
 			} else if (label_ == "Add pattern (snare)") {
 				arrange_window->AddPattern(SNARE, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);

@@ -106,10 +106,12 @@ void AudioTrack::AddAudioClip(int start_in_samples, AudioFile* file) {
 	double position = start_in_samples * width_of_sample_ + get_parent()->get_left();
 	double clip_length = file->get_num_frames() * width_of_sample_;
 	int end_in_samples = start_in_samples + file->get_num_frames();
+	AudioClip* clip = new AudioClip(position, top_, position + clip_length, bottom_, this, position, file,
+			start_in_samples, end_in_samples);
+	file->set_parent(clip);
 //	std::cout << "creating audio clip with bounds: " << position << ", " << top_ << ", " << position + clip_length
 //			<< ", " << bottom_ << std::endl;
-	audio_clips_.push_back(new AudioClip(position, top_, position + clip_length, bottom_, this, position, file,
-			start_in_samples, end_in_samples));
+	audio_clips_.push_back(clip);
 }
 
 } /* namespace add9daw2 */

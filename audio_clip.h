@@ -29,8 +29,7 @@ public:
 		bpm_(140),
 		start_in_samples_(start_in_samples),
 		end_in_samples_(end_in_samples),
-		file_(file)
-		{}
+		file_(file) {}
 	virtual ~AudioClip();
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
 	inline bool is_being_dragged() { return dragging_; }

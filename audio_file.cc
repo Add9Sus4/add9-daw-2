@@ -6,6 +6,7 @@
  */
 
 #include "audio_file.h"
+#include "audio_track.h"
 
 namespace add9daw2 {
 
@@ -321,8 +322,12 @@ void AudioFile::DrawInClip(double left, double top, double right, double bottom)
 	glColor3d(audio_file_clip_.r,audio_file_clip_.g,audio_file_clip_.b);
 	glBegin(GL_LINE_STRIP);
 	int inc = get_num_frames()/100;
+	AudioTrack* track = (AudioTrack*) get_parent()->get_parent();
 	for (int i=0; i<get_num_frames(); i+=inc) {
-		glVertex2d(left + (double)width_per_frame*i, midpoint_y + audio_[LEFT][i]*normalize_factor);
+		double pos = left + (double)width_per_frame*i;
+		if (pos > track->get_left() && pos < track->get_right()) {
+			glVertex2d(pos, midpoint_y + audio_[LEFT][i]*normalize_factor);
+		}
 	}
 	glEnd();
 }

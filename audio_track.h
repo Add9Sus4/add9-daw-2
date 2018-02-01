@@ -22,6 +22,7 @@ namespace add9daw2 {
 
 typedef enum SampleType {
 	KICK,
+	CLAP,
 	SNARE,
 	TOM,
 	HAT,

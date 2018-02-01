@@ -64,6 +64,7 @@ public:
 		bottom_ = bottom;
 	}
 	inline void set_hidden(bool hidden) { hidden_ = hidden; }
+	inline void set_parent(Window* parent) { parent_ = parent; }
 
 
 

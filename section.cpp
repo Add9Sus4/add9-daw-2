@@ -94,6 +94,7 @@ bool Section::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 					menu_ = new Menu(parent_->get_left(), parent_->get_top(),
 							parent_->get_right(), parent_->get_bottom(), this);
 					menu_->add_option("Add pattern (kick)");
+					menu_->add_option("Add pattern (clap)");
 					menu_->add_option("Add pattern (snare)");
 					menu_->add_option("Add pattern (hat)");
 					menu_->add_option("Add pattern (high impact)");

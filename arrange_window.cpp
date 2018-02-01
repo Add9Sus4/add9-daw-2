@@ -15,6 +15,7 @@ ArrangeWindow::ArrangeWindow(double left, double top, double right, double botto
 	mouse_ = NULL;
 	// Add initial audio tracks
 	AddAudioTrack(KICK);
+	AddAudioTrack(CLAP);
 	AddAudioTrack(SNARE);
 	AddAudioTrack(HAT);
 	AddAudioTrack(HIGH_IMPACT);
@@ -329,6 +330,24 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 				}
 			}
 			break;
+		case CLAP:
+//			 Get random clap sample
+			file = AudioFile::GetRandomSampleFromDir(CLAP_DIR_PATH);
+//			 Find the clap audio track
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					start_in_samples = start_measure * num_samples_per_measure();
+					end_in_samples = end_measure * num_samples_per_measure();
+					increment = num_samples_per_measure() / 4.0;
+					for (int j=start_in_samples; j<end_in_samples; j += increment) {
+						if (add) {
+							audio_tracks_[i]->AddAudioClip(j, file);
+						}
+						add = !add;
+					}
+				}
+			}
+			break;
 		case SNARE:
 //			 Get random snare sample
 			file = AudioFile::GetRandomSampleFromDir(SNARE_DIR_PATH);
@@ -385,7 +404,7 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 			}
 			break;
 		case PUNCHY_IMPACT:
-			// Get random low impact sample
+			// Get random punchy impact sample
 			file = AudioFile::GetRandomSampleFromDir(PUNCHY_IMPACT_DIR_PATH);
 			for (int i=0; i<audio_tracks_.size(); i++) {
 				if (audio_tracks_[i]->get_sample_type() == sample_type) {
@@ -395,7 +414,7 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 			}
 			break;
 		case SWEEP_UP:
-			// Get random low impact sample
+			// Get random sweep up sample
 			file = AudioFile::GetRandomSampleFromDir(SWEEP_UP_DIR_PATH);
 			for (int i=0; i<audio_tracks_.size(); i++) {
 				if (audio_tracks_[i]->get_sample_type() == sample_type) {
@@ -405,7 +424,7 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 			}
 			break;
 		case SWEEP_DOWN:
-			// Get random low impact sample
+			// Get random sweep down sample
 			file = AudioFile::GetRandomSampleFromDir(SWEEP_DOWN_DIR_PATH);
 			for (int i=0; i<audio_tracks_.size(); i++) {
 				if (audio_tracks_[i]->get_sample_type() == sample_type) {

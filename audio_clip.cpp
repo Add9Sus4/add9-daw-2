@@ -56,17 +56,28 @@ Rect AudioClip::Draw() {
 	// Set bounds on clip
 	left_ = get_parent()->get_left() + (double) start_in_samples_ * width_of_sample_;
 	right_ = get_parent()->get_left() + (double) end_in_samples_ * width_of_sample_;
-	if (left_ - x_offset_ < get_parent()->get_left() || right_ - x_offset_ > get_parent()->get_right()) {
+	double clip_rect_left = left_ - x_offset_ + drag_amt_;
+	double clip_rect_right = right_ - x_offset_ + drag_amt_;
+	// If the clip overflows on the left side of the arrange window
+	if (clip_rect_left < get_parent()->get_left()) {
+		clip_rect_left = get_parent()->get_left();
+	}
+	// If the clip overflows on the right side of the arrange window
+	if (clip_rect_right > get_parent()->get_right()) {
+		clip_rect_right = get_parent()->get_right();
+	}
+	// If the clip is outside the bounds of the arrange window completely
+	if (clip_rect_right < get_parent()->get_left() || clip_rect_left > get_parent()->get_right()) {
 		return Rect(left_, top_, right_, bottom_);
 	}
 	// Draw clip rectangle
 	glColor3d(color_.r, color_.g, color_.b);
 	glBegin(GL_LINE_STRIP);
-	glVertex2d(left_ - x_offset_ + drag_amt_, top_ - AUDIO_TRACK_PADDING);
-	glVertex2d(right_ - x_offset_ + drag_amt_, top_ - AUDIO_TRACK_PADDING);
-	glVertex2d(right_ - x_offset_ + drag_amt_, bottom_ + AUDIO_TRACK_PADDING);
-	glVertex2d(left_ - x_offset_ + drag_amt_, bottom_ + AUDIO_TRACK_PADDING);
-	glVertex2d(left_ - x_offset_ + drag_amt_, top_ - AUDIO_TRACK_PADDING);
+	glVertex2d(clip_rect_left, top_ - AUDIO_TRACK_PADDING);
+	glVertex2d(clip_rect_right, top_ - AUDIO_TRACK_PADDING);
+	glVertex2d(clip_rect_right, bottom_ + AUDIO_TRACK_PADDING);
+	glVertex2d(clip_rect_left, bottom_ + AUDIO_TRACK_PADDING);
+	glVertex2d(clip_rect_left, top_ - AUDIO_TRACK_PADDING);
 	glEnd();
 	// Draw audio
 	file_->DrawInClip(left_ - x_offset_ + drag_amt_, top_ - AUDIO_TRACK_PADDING, right_ - x_offset_ + drag_amt_, bottom_ + AUDIO_TRACK_PADDING);
