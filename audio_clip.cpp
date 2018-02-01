@@ -77,7 +77,7 @@ Rect AudioClip::Draw() {
 double* AudioClip::get_audio(double locator_position, int frames_per_buffer, int channels) {
 	double* output = new double[frames_per_buffer*channels];
 	// what sample should we start at?
-	std::cout << "getting audio starting from frame " << locator_position << std::endl;
+//	std::cout << "getting audio starting from frame " << locator_position << std::endl;
 	// Mono audio to mono output
 	if (file_->is_mono() && channels == MONO) {
 		double* audio;

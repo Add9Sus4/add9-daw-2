@@ -49,6 +49,21 @@ bool MenuOption::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) 
 			} else if (label_ == "Add pattern (hat)") {
 				arrange_window->AddPattern(HAT, section->get_start_measure(), section->get_end_measure());
 				menu->set_opened(false);
+			} else if (label_ == "Add pattern (high impact)") {
+				arrange_window->AddPattern(HIGH_IMPACT, section->get_start_measure(), section->get_end_measure());
+				menu->set_opened(false);
+			} else if (label_ == "Add pattern (low impact)") {
+				arrange_window->AddPattern(LOW_IMPACT, section->get_start_measure(), section->get_end_measure());
+				menu->set_opened(false);
+			} else if (label_ == "Add pattern (punchy impact)") {
+				arrange_window->AddPattern(PUNCHY_IMPACT, section->get_start_measure(), section->get_end_measure());
+				menu->set_opened(false);
+			} else if (label_ == "Add pattern (sweep up)") {
+				arrange_window->AddPattern(SWEEP_UP, section->get_start_measure(), section->get_end_measure());
+				menu->set_opened(false);
+			} else if (label_ == "Add pattern (sweep down)") {
+				arrange_window->AddPattern(SWEEP_DOWN, section->get_start_measure(), section->get_end_measure());
+				menu->set_opened(false);
 			}
 			break;
 		case DOUBLE_CLICK:

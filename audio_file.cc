@@ -180,7 +180,7 @@ double* AudioFile::GetAudioFromChannel(int channel)
 }
 double* AudioFile::GetAudioFromChannel(int channel, int start_frame, int end_frame)
 {
-	std::cout << "getting audio starting from frame " << start_frame << " to " << end_frame << std::endl;
+//	std::cout << "getting audio starting from frame " << start_frame << " to " << end_frame << std::endl;
 	int length = end_frame - start_frame;
 	if (end_frame > audio_[LEFT].size()) {
 		std::cout << "End frame (" << end_frame << ") must not be greater than the number of audio frames (" << audio_[LEFT].size() << ")." << std::endl;

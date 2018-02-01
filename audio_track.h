@@ -8,7 +8,7 @@
 #ifndef AUDIO_TRACK_H_
 #define AUDIO_TRACK_H_
 
-#define AUDIO_TRACK_HEIGHT	0.1
+#define AUDIO_TRACK_HEIGHT	0.05
 
 #include <glut/GLUT.h>
 
@@ -24,7 +24,12 @@ typedef enum SampleType {
 	KICK,
 	SNARE,
 	TOM,
-	HAT
+	HAT,
+	HIGH_IMPACT,
+	LOW_IMPACT,
+	PUNCHY_IMPACT,
+	SWEEP_UP,
+	SWEEP_DOWN
 } SampleType;
 
 class AudioTrack : public Window {

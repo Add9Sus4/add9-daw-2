@@ -96,6 +96,11 @@ bool Section::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) {
 					menu_->add_option("Add pattern (kick)");
 					menu_->add_option("Add pattern (snare)");
 					menu_->add_option("Add pattern (hat)");
+					menu_->add_option("Add pattern (high impact)");
+					menu_->add_option("Add pattern (low impact)");
+					menu_->add_option("Add pattern (punchy impact)");
+					menu_->add_option("Add pattern (sweep up)");
+					menu_->add_option("Add pattern (sweep down)");
 				}
 			}
 			break;

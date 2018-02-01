@@ -17,6 +17,11 @@ ArrangeWindow::ArrangeWindow(double left, double top, double right, double botto
 	AddAudioTrack(KICK);
 	AddAudioTrack(SNARE);
 	AddAudioTrack(HAT);
+	AddAudioTrack(HIGH_IMPACT);
+	AddAudioTrack(LOW_IMPACT);
+	AddAudioTrack(PUNCHY_IMPACT);
+	AddAudioTrack(SWEEP_UP);
+	AddAudioTrack(SWEEP_DOWN);
 	// Initialize colors
 	playback_locator_color_ = playback_locator_color_init_;
 	zoom_area_color_ = zoom_area_color_init_;
@@ -356,6 +361,56 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 							audio_tracks_[i]->AddAudioClip(j, file);
 						}
 					}
+				}
+			}
+			break;
+		case HIGH_IMPACT:
+			// Get random high impact sample
+			file = AudioFile::GetRandomSampleFromDir(HIGH_IMPACT_DIR_PATH);
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					start_in_samples = start_measure * num_samples_per_measure();
+					audio_tracks_[i]->AddAudioClip(start_in_samples, file);
+				}
+			}
+			break;
+		case LOW_IMPACT:
+			// Get random low impact sample
+			file = AudioFile::GetRandomSampleFromDir(LOW_IMPACT_DIR_PATH);
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					start_in_samples = start_measure * num_samples_per_measure();
+					audio_tracks_[i]->AddAudioClip(start_in_samples, file);
+				}
+			}
+			break;
+		case PUNCHY_IMPACT:
+			// Get random low impact sample
+			file = AudioFile::GetRandomSampleFromDir(PUNCHY_IMPACT_DIR_PATH);
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					start_in_samples = start_measure * num_samples_per_measure();
+					audio_tracks_[i]->AddAudioClip(start_in_samples, file);
+				}
+			}
+			break;
+		case SWEEP_UP:
+			// Get random low impact sample
+			file = AudioFile::GetRandomSampleFromDir(SWEEP_UP_DIR_PATH);
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					end_in_samples = end_measure * num_samples_per_measure();
+					audio_tracks_[i]->AddAudioClip(end_in_samples - file->get_num_frames(), file);
+				}
+			}
+			break;
+		case SWEEP_DOWN:
+			// Get random low impact sample
+			file = AudioFile::GetRandomSampleFromDir(SWEEP_DOWN_DIR_PATH);
+			for (int i=0; i<audio_tracks_.size(); i++) {
+				if (audio_tracks_[i]->get_sample_type() == sample_type) {
+					start_in_samples = start_measure * num_samples_per_measure();
+					audio_tracks_[i]->AddAudioClip(start_in_samples, file);
 				}
 			}
 			break;
