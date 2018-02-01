@@ -13,16 +13,6 @@ namespace add9daw2 {
 ArrangeWindow::ArrangeWindow(double left, double top, double right, double bottom, Window* parent) :
 		Window(left, top, right, bottom, parent) {
 	mouse_ = NULL;
-	// Add initial audio tracks
-	AddAudioTrack(KICK);
-	AddAudioTrack(CLAP);
-	AddAudioTrack(SNARE);
-	AddAudioTrack(HAT);
-	AddAudioTrack(HIGH_IMPACT);
-	AddAudioTrack(LOW_IMPACT);
-	AddAudioTrack(PUNCHY_IMPACT);
-	AddAudioTrack(SWEEP_UP);
-	AddAudioTrack(SWEEP_DOWN);
 	// Initialize colors
 	playback_locator_color_ = playback_locator_color_init_;
 	zoom_area_color_ = zoom_area_color_init_;
@@ -311,6 +301,16 @@ void ArrangeWindow::AddAudioTrack(SampleType sample_type) {
 	}
 
 void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int end_measure) {
+	// If no track exists with the specified sample type, create it.
+	bool track_exists = false;
+	for (int i=0; i<audio_tracks_.size(); i++) {
+		if (audio_tracks_[i]->get_sample_type() == sample_type) {
+			track_exists = true;
+		}
+	}
+	if (!track_exists) {
+		AddAudioTrack(sample_type);
+	}
 	AudioFile* file = 0;
 	bool add = false;
 	int start_in_samples = 0, end_in_samples = 0, increment = 0;
