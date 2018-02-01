@@ -69,7 +69,6 @@ public:
 	}
 	inline void set_not_selected() { color_factor_ = color_factor_init_; }
 	inline bool has_menu_open() { return menu_ != 0; }
-	void Font(void *font, char *text, double x, double y);
 private:
 	SectionType section_type_;
 	int start_measure_, end_measure_;

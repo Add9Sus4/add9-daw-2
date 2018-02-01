@@ -96,8 +96,6 @@ public:
 
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
 
-	void Font(void *font, char *text, double x, double y);
-
 	// Flips the phase of the audio.
 	void InvertPhase();
 

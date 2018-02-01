@@ -29,7 +29,6 @@ public:
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
 private:
 	std::string label_;
-	void Font(void *font, char *text, double x, double y);
 	Color option_color_init_ {0.1, 0.4, 0.3};
 	Color option_color_selected_ {0.2, 0.8, 0.6};
 };

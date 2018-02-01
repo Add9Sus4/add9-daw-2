@@ -11,6 +11,7 @@
 #define AMP_DB	8.685889638065036553
 
 #include "glut/GLUT.h"
+#include <stdio.h>
 
 namespace add9daw2 {
 

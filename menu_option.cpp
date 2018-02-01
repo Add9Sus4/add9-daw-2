@@ -87,16 +87,4 @@ bool MenuOption::ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) 
 	return true;
 }
 
-void MenuOption::Font(void *font, char *text, double x, double y) {
-	glDisable(GL_LIGHTING);
-	char buf[20];
-	snprintf(buf, 20, "%s", text);
-	glRasterPos2d(x, y);
-	while ( *text != '\0') {
-		glutBitmapCharacter(font, *text);
-		++text;
-	}
-	glEnable(GL_LIGHTING);
-}
-
 } /* namespace add9daw2 */

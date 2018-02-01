@@ -36,7 +36,6 @@ public:
 	// Draws this folder immediately below the given rect
 	Rect DrawBelow(Rect rect, double translate_amount);
 	bool ReceiveMouseEvent(Mouse* mouse, MouseEventType mouseEventType) override;
-	void Font(void *font, char *text, double x, double y);
 	inline std::vector<AudioFile*> get_files() { return files_; }
 private:
 	bool open_;

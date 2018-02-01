@@ -10,7 +10,6 @@
 
 #include "glut/GLUT.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -61,7 +60,6 @@ private:
 	double width_of_sample_ = 0.0000003, bpm_ = 140.0, zoom_drag_z_amt_ = 0.0;
 
 	int playback_locator_ = 1;
-	void Font(void *font, char *text, double x, double y);
 	std::vector<AudioTrack*> audio_tracks_;
 	Mouse* mouse_;
 	Color playback_locator_color_init_ = {0.15, 0.25, 0.1};

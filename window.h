@@ -8,6 +8,7 @@
 #ifndef WINDOW_H_
 #define WINDOW_H_
 
+#include <glut/GLUT.h>
 #include <iostream>
 
 #include "color.h"
@@ -93,6 +94,17 @@ protected:
 	Color color_selected_ = {0.6, 0.7, 0.8};
 	Color color_init_ = {0.3, 0.35, 0.4};
 	Window* parent_;
+	inline void Font(void *font, char *text, double x, double y) {
+		glDisable(GL_LIGHTING);
+		char buf[20];
+		snprintf(buf, 20, "%s", text);
+		glRasterPos2d(x, y);
+		while ( *text != '\0') {
+			glutBitmapCharacter(font, *text);
+			++text;
+		}
+		glEnable(GL_LIGHTING);
+	}
 };
 
 } /* namespace add9daw2 */
