@@ -89,7 +89,82 @@ Rect AudioTrack::Draw() {
 		audio_clips_[i]->set_bpm(bpm_);
 		audio_clips_[i]->Draw();
 	}
+	// Draw name of audio track
+	Font(GLUT_BITMAP_HELVETICA_10, (char*) name_.c_str(), right_ + AUDIO_TRACK_PADDING, bottom_ + (top_ - bottom_)/2.0);
 	return Rect(left_, top_, right_, bottom_);
+}
+
+std::string AudioTrack::get_sample_type_name() {
+	std::string name = "N/A";
+	switch (sample_type_) {
+	case CLAP:
+		name = "Clap";
+		break;
+	case CRASH:
+		name = "Crash";
+		break;
+	case EIGHT_O_EIGHT:
+		name = "808";
+		break;
+	case HAT:
+		name = "Hat";
+		break;
+	case HIGH_IMPACT:
+		name = "High Impact";
+		break;
+	case KICK:
+		name = "Kick";
+		break;
+	case LOW_IMPACT:
+		name = "Low Impact";
+		break;
+	case PERC:
+		name = "Perc";
+		break;
+	case PITCH_DOWN:
+		name = "Pitch Down";
+		break;
+	case PITCH_RISER:
+		name = "Pitch Riser";
+		break;
+	case PRYDA:
+		name = "Pryda";
+		break;
+	case PUNCHY_IMPACT:
+		name = "Punchy Impact";
+		break;
+	case RIDE:
+		name = "Ride";
+		break;
+	case SHAKER:
+		name = "Shaker";
+		break;
+	case SNAP:
+		name = "Snap";
+		break;
+	case SNARE:
+		name = "Snare";
+		break;
+	case SUB_DROP:
+		name = "Sub Drop";
+		break;
+	case SWEEP_DOWN:
+		name = "Sweep Down";
+		break;
+	case SWEEP_UP:
+		name = "Sweep Up";
+		break;
+	case TOM:
+		name = "Tom";
+		break;
+	case WAR_DRUM:
+		name = "War Drum";
+		break;
+	default:
+		name = "N/A";
+		break;
+	}
+	return name;
 }
 
 void AudioTrack::AddAudioClip(double position, AudioFile* file) {

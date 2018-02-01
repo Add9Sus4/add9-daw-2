@@ -314,6 +314,7 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 	AudioFile* file = 0;
 	bool add = false;
 	int start_in_samples = 0, end_in_samples = 0, increment = 0;
+	std::string pattern_type = "Offbeat";
 	switch (sample_type) {
 		case KICK:
 			// Get random kick sample
@@ -374,10 +375,20 @@ void ArrangeWindow::AddPattern(SampleType sample_type, int start_measure, int en
 				if (audio_tracks_[i]->get_sample_type() == sample_type) {
 					start_in_samples = start_measure * num_samples_per_measure();
 					end_in_samples = end_measure * num_samples_per_measure();
-					increment = num_samples_per_measure() / 16.0;
-					for (int j=start_in_samples; j<end_in_samples; j += increment) {
-						if (rand()%100 > 50) {
-							audio_tracks_[i]->AddAudioClip(j, file);
+					if (pattern_type == "Offbeat") {
+						increment = num_samples_per_measure() / 8.0;
+						for (int j=start_in_samples; j<end_in_samples; j += increment) {
+							if (add) {
+								audio_tracks_[i]->AddAudioClip(j, file);
+							}
+							add = !add;
+						}
+					} else if (pattern_type == "Random") {
+						increment = num_samples_per_measure() / 16.0;
+						for (int j=start_in_samples; j<end_in_samples; j += increment) {
+							if (rand()%100 > 50) {
+								audio_tracks_[i]->AddAudioClip(j, file);
+							}
 						}
 					}
 				}
