@@ -6,6 +6,10 @@
  */
 
 #include "arrange_window.h"
+#include "clap_pattern.h"
+#include "hat_pattern.h"
+#include "kick_pattern.h"
+#include "snare_pattern.h"
 #include "resources.h"
 
 namespace add9daw2 {
@@ -19,17 +23,66 @@ ArrangeWindow::ArrangeWindow(double left, double top, double right, double botto
 	// Create zoom area
 	zoom_area_ = new Rect(left, bottom + ZOOM_AREA_HEIGHT, right, bottom);
 	// Add initial sections
-	AddSection(new Section(INTRO, 1, 5, this));
-	AddSection(new Section(VERSE, 5, 21, this));
-	AddSection(new Section(BREAK, 21, 29, this));
-	AddSection(new Section(BUILD, 29, 37, this));
-	AddSection(new Section(DROP, 37, 53, this));
-	AddSection(new Section(BREAK, 53, 57, this));
-	AddSection(new Section(VERSE, 57, 73, this));
-	AddSection(new Section(BREAK, 73, 81, this));
-	AddSection(new Section(BUILD, 81, 89, this));
-	AddSection(new Section(DROP, 89, 105, this));
-	AddSection(new Section(OUTRO, 105, 113, this));
+	Section* intro = new Section(INTRO, 1, 5, this);
+	Section* verse_1 = new Section(VERSE, 5, 21, this);
+	AddPattern(new KickPattern(FOUR_ON_THE_FLOOR), KICK, 5, 21);
+	AddPattern(new ClapPattern(TWO_AND_FOUR), CLAP, 5, 21);
+	AddPattern(new HatPattern(OFFBEAT), HAT, 5, 21);
+	AddPattern(0, SWEEP_DOWN, 5, 21);
+	AddPattern(0, HIGH_IMPACT, 5, 21);
+	Section* break_1 = new Section(BREAK, 21, 29, this);
+	AddPattern(0, SWEEP_DOWN, 21, 29);
+	AddPattern(0, HIGH_IMPACT, 21, 29);
+	AddPattern(0, LOW_IMPACT, 21, 29);
+	Section* build_1 = new Section(BUILD, 29, 37, this);
+	AddPattern(new SnarePattern(EIGHT_BAR_BUILD), SNARE, 29, 37);
+	AddPattern(0, SWEEP_DOWN, 29, 37);
+	AddPattern(0, SWEEP_UP, 29, 37);
+	Section* drop_1 = new Section(DROP, 37, 53, this);
+	AddPattern(new KickPattern(FOUR_ON_THE_FLOOR), KICK, 37, 53);
+	AddPattern(new ClapPattern(TWO_AND_FOUR), CLAP, 37, 53);
+	AddPattern(new HatPattern(OFFBEAT), HAT, 37, 53);
+	AddPattern(0, SWEEP_DOWN, 37, 53);
+	AddPattern(0, HIGH_IMPACT, 37, 53);
+	Section* break_2 = new Section(BREAK, 53, 61, this);
+	AddPattern(0, SWEEP_DOWN, 53, 61);
+	AddPattern(0, HIGH_IMPACT, 53, 61);
+	AddPattern(0, LOW_IMPACT, 53, 61);
+	Section* verse_2 = new Section(VERSE, 61, 77, this);
+	AddPattern(new KickPattern(FOUR_ON_THE_FLOOR), KICK, 61, 77);
+	AddPattern(new ClapPattern(TWO_AND_FOUR), CLAP, 61, 77);
+	AddPattern(new HatPattern(OFFBEAT), HAT, 61, 77);
+	AddPattern(0, SWEEP_DOWN, 61, 77);
+	AddPattern(0, HIGH_IMPACT, 61, 77);
+	Section* break_3 = new Section(BREAK, 77, 85, this);
+	AddPattern(0, SWEEP_DOWN, 77, 85);
+	AddPattern(0, HIGH_IMPACT, 77, 85);
+	AddPattern(0, LOW_IMPACT, 77, 85);
+	Section* build_2 = new Section(BUILD, 85, 93, this);
+	AddPattern(new SnarePattern(EIGHT_BAR_BUILD), SNARE, 85, 93);
+	AddPattern(0, SWEEP_DOWN, 85, 93);
+	AddPattern(0, SWEEP_UP, 85, 93);
+	Section* drop_2 = new Section(DROP, 93, 109, this);
+	AddPattern(new KickPattern(FOUR_ON_THE_FLOOR), KICK, 93, 109);
+	AddPattern(new ClapPattern(TWO_AND_FOUR), CLAP, 93, 109);
+	AddPattern(new HatPattern(OFFBEAT), HAT, 93, 109);
+	AddPattern(0, SWEEP_DOWN, 93, 109);
+	AddPattern(0, HIGH_IMPACT, 93, 109);
+	Section* outro = new Section(OUTRO, 109, 113, this);
+	AddPattern(0, SWEEP_DOWN, 109, 113);
+	AddPattern(0, HIGH_IMPACT, 109, 113);
+	AddPattern(0, LOW_IMPACT, 109, 113);
+	AddSection(intro);
+	AddSection(verse_1);
+	AddSection(break_1);
+	AddSection(build_1);
+	AddSection(drop_1);
+	AddSection(break_2);
+	AddSection(verse_2);
+	AddSection(break_3);
+	AddSection(build_2);
+	AddSection(drop_2);
+	AddSection(outro);
 
 	if (sections_.size() > 1) {
 		AdjustBounds(sections_[0]->get_start_measure(), sections_[sections_.size()-1]->get_end_measure());
@@ -342,12 +395,11 @@ void ArrangeWindow::AddPattern(Pattern* pattern, SampleType sample_type, int sta
 				if (audio_tracks_[i]->get_sample_type() == sample_type) {
 					start_in_samples = start_measure * num_samples_per_measure();
 					end_in_samples = end_measure * num_samples_per_measure();
-					increment = num_samples_per_measure() / 4.0;
-					for (int j=start_in_samples; j<end_in_samples; j += increment) {
-						if (add) {
-							audio_tracks_[i]->AddAudioClip(j, file);
+					data = pattern->get_data(end_in_samples - start_in_samples, num_samples_per_measure());
+					for (int j=0; j<data.size(); j ++) {
+						if (data[j]) {
+							audio_tracks_[i]->AddAudioClip(start_in_samples + j, file);
 						}
-						add = !add;
 					}
 				}
 			}
@@ -360,12 +412,11 @@ void ArrangeWindow::AddPattern(Pattern* pattern, SampleType sample_type, int sta
 				if (audio_tracks_[i]->get_sample_type() == sample_type) {
 					start_in_samples = start_measure * num_samples_per_measure();
 					end_in_samples = end_measure * num_samples_per_measure();
-					increment = num_samples_per_measure() / 2.0;
-					for (int j=start_in_samples; j<end_in_samples; j += increment) {
-						if (add) {
-							audio_tracks_[i]->AddAudioClip(j, file);
+					data = pattern->get_data(end_in_samples - start_in_samples, num_samples_per_measure());
+					for (int j=0; j<data.size(); j ++) {
+						if (data[j]) {
+							audio_tracks_[i]->AddAudioClip(start_in_samples + j, file);
 						}
-						add = !add;
 					}
 				}
 			}
@@ -378,20 +429,10 @@ void ArrangeWindow::AddPattern(Pattern* pattern, SampleType sample_type, int sta
 				if (audio_tracks_[i]->get_sample_type() == sample_type) {
 					start_in_samples = start_measure * num_samples_per_measure();
 					end_in_samples = end_measure * num_samples_per_measure();
-					if (pattern_type == "Offbeat") {
-						increment = num_samples_per_measure() / 8.0;
-						for (int j=start_in_samples; j<end_in_samples; j += increment) {
-							if (add) {
-								audio_tracks_[i]->AddAudioClip(j, file);
-							}
-							add = !add;
-						}
-					} else if (pattern_type == "Random") {
-						increment = num_samples_per_measure() / 16.0;
-						for (int j=start_in_samples; j<end_in_samples; j += increment) {
-							if (rand()%100 > 50) {
-								audio_tracks_[i]->AddAudioClip(j, file);
-							}
+					data = pattern->get_data(end_in_samples - start_in_samples, num_samples_per_measure());
+					for (int j=0; j<data.size(); j ++) {
+						if (data[j]) {
+							audio_tracks_[i]->AddAudioClip(start_in_samples + j, file);
 						}
 					}
 				}

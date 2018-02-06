@@ -11,13 +11,16 @@ CPP_SRCS += \
 ../arrange_window.cpp \
 ../audio_clip.cpp \
 ../audio_track.cpp \
+../clap_pattern.cpp \
 ../files_window.cpp \
 ../folder.cpp \
+../hat_pattern.cpp \
 ../kick_pattern.cpp \
 ../menu.cpp \
 ../menu_option.cpp \
 ../pattern.cpp \
 ../section.cpp \
+../snare_pattern.cpp \
 ../vertical_scrollbar.cpp \
 ../window.cpp 
 
@@ -30,14 +33,17 @@ OBJS += \
 ./audio_clip.o \
 ./audio_file.o \
 ./audio_track.o \
+./clap_pattern.o \
 ./files_window.o \
 ./folder.o \
+./hat_pattern.o \
 ./kick_pattern.o \
 ./menu.o \
 ./menu_option.o \
 ./pattern.o \
 ./run_daw.o \
 ./section.o \
+./snare_pattern.o \
 ./vertical_scrollbar.o \
 ./window.o 
 
@@ -45,13 +51,16 @@ CPP_DEPS += \
 ./arrange_window.d \
 ./audio_clip.d \
 ./audio_track.d \
+./clap_pattern.d \
 ./files_window.d \
 ./folder.d \
+./hat_pattern.d \
 ./kick_pattern.d \
 ./menu.d \
 ./menu_option.d \
 ./pattern.d \
 ./section.d \
+./snare_pattern.d \
 ./vertical_scrollbar.d \
 ./window.d 
 
